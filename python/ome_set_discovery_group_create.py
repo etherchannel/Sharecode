@@ -2,8 +2,8 @@
 #written by rob.smith1@dell.com
 
 #examples:
-#py.exe .\ome_discovery.py -i 192.168.1.142 -u admin -p P@ssw0rd -n "my stuff" -r 192.168.1.128 -d root -e calvin
-#py.exe .\ome_discovery.py -i 192.168.1.142 -u admin -p P@ssw0rd -n "my stuff" -r 192.168.1.128-192.168.1.138 -d root -e calvin
+#py.exe .\ome_set_discovery_group_create.py -i 192.168.1.142 -u admin -p P@ssw0rd1 -n "my stuff" -r 192.168.1.128 -d root -e calvin
+#py.exe .\ome_set_discovery_group_create.py -i 192.168.1.142 -u admin -p P@ssw0rd1 -n "my stuff" -r 192.168.1.128-192.168.1.138 -d root -e calvin
 
 #import python modules
 import requests, warnings, argparse
@@ -42,4 +42,11 @@ headers = {'Content-Type': 'application/json'}
 
 response = requests.post(url, headers=headers, data = payload, verify=False, auth=(ome_user, ome_pass))
 
-print(response.text)
+#print(response.text)
+#print(response.status_code)
+
+if response.status_code == 201:
+    print("Discovery group created.")
+else:
+    print(response.text)
+    print(response.status_code)
