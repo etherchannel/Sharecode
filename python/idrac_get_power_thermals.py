@@ -1,3 +1,9 @@
+#this script was written and tested using python 3.9.5 targeting a dell poweredge r640 running idrac firmware 5.00.00.00
+#it will retrieve certain power and thermal related data points from dell servers.
+#it is intented for lab use only.
+#written by rob_smith1@dell.com
+#example) py.exe .\idrac_get_power_thermals.py -ip 10.10.10.10 -u root -p calvin
+
 
 import requests, json, sys, re, time, warnings, argparse
 from datetime import datetime
