@@ -41,8 +41,9 @@ def verify():
     response_json = response.json()
     if response.status_code == 200:
         autodeployid = response_json['AutoDeployId']
+        print("Service tag verification successful for " + svc_tag + ".")
     else:
-        print("Auto deploy validation failed for device", svc_tag)
+        print("Service tag verification failed for " + svc_tag + ".  Ensure service tag syntax is valid and that an auto deploy job does not already exist.")
         sys.exit()
 
 #create auto deploy job
@@ -52,9 +53,9 @@ def request():
     headers = {'Content-Type': 'application/json'}
     response = requests.post(url, headers=headers, data = payload, verify=False, auth=('admin', 'P@ssw0rd1'))
     if response.text == '0':
-        print("Auto deploy validation and request successful for device", svc_tag)
+        print("Auto Deploy job creation successful for " + svc_tag + ".")
     else:
-        print("Auto deploy validation and request failed for device", svc_tag)
+        print("Auto Deploy job creation failed for " + svc_tag + ".")
 
 #code execution
 if __name__ == "__main__":

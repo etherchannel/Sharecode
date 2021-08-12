@@ -36,6 +36,6 @@ payload = json.dumps({"AnnouncedTarget": [{"ServiceTag": svc_tag, "UserName": id
 headers = {'Content-Type': 'application/json'}
 response = requests.post(url, headers=headers, data = payload, verify=False, auth=(ome_user, ome_pass))
 if response.text == "0":
-    print('Node info was sucessfully added for', svc_tag)
+    print('Node info was sucessfully added for ' + svc_tag + ".")
 else:
-    print('Node info failed to be added for', svc_tag)
+    print('Node info failed to be added for ' + svc_tag + ".")
