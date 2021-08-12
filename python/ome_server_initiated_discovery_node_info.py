@@ -31,7 +31,7 @@ idrac_user = args["r"]
 idrac_pass = args["c"]
 
 #push node info to ome
-url = "https://192.168.1.142/api/DiscoveryConfigService/Actions/DiscoveryConfigService.UploadNodeInfo"
+url = "https://%s/api/DiscoveryConfigService/Actions/DiscoveryConfigService.UploadNodeInfo" % (ome_ip)
 payload = json.dumps({"AnnouncedTarget": [{"ServiceTag": svc_tag, "UserName": idrac_user, "Password": idrac_pass, "CredentialType": "WSMAN"}]})
 headers = {'Content-Type': 'application/json'}
 response = requests.post(url, headers=headers, data = payload, verify=False, auth=(ome_user, ome_pass))
