@@ -2,7 +2,7 @@
 #   Arguments for ome ip, ome username, ome password, template id, and device service tag are required.
 #   It is recommended to first create auto deploy job via gui then run ome_auto_deploy_list.py to identify value for template id.
 #   For boot-to-iso functionality, the payload in request() can be modified with appropriate information.
-#   Example) py.exe .\ome_auto_deploy_verify_request.py -i 192.168.1.142 -u admin -p P@ssw0rd1 -s UUU6FC9 -t 29.
+#   Example) py.exe .\ome_auto_deploy_verify_request.py -i 192.168.1.142 -u admin -p P@ssw0rd1 -s UUU6FC9 -t 29
 #   Written using ome 3.6.1 and python 3.9.5.
 #   Written by rob_smith1@dell.com, mindingmyowndata@gmail.com.
 #   For lab use only.

@@ -1,5 +1,5 @@
 #   This script can be used to provide inforamtion required for ome server initiated discovery feature.
-#   Example) py.exe .\ome_server_initiated_discovery_node_info.py -i 192.168.1.142 -u admin -p P@ssw0rd1 -s UUU6FC9 -r root -c calvin
+#   Example) py.exe .\ome_server_initiated_discovery_node_info.py -i 192.168.1.142 -u admin -p P@ssw0rd1 -s UUU6FC9 -r root -c calvin 
 #   Written using ome 3.6.1 and python 3.9.5.
 #   Written by rob_smith1@dell.com, mindingmyowndata@gmail.com.
 #   For lab use only.
