@@ -47,7 +47,7 @@ def verify():
 
 #create auto deploy job
 def request():
-    url = "https://192.168.1.142/api/AutoDeployService/AutoDeploy"
+    url = "https://%s/api/AutoDeployService/AutoDeploy" % (ome_ip)
     payload = json.dumps({"AutoDeployId": autodeployid, "GroupId": None, "NetworkBootIsoModel": {"BootToNetwork": False, "ShareType": "CIFS", "IsoPath": "abc.iso", "ShareDetail": {"IpAddress": "xx.xx.xx.xx", "ShareName": "10.22.33.22", "User": "asdf", "Password": "asdf"}}, "Attributes": []})
     headers = {'Content-Type': 'application/json'}
     response = requests.post(url, headers=headers, data = payload, verify=False, auth=('admin', 'P@ssw0rd1'))
