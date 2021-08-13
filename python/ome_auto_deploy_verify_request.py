@@ -34,6 +34,7 @@ template_id = args["t"]
 
 #validate provided service tag
 def generate_auto_deployment_id():
+    import requests
     global autodeployid
     url = "https://%s/api/AutoDeployService/Actions/AutoDeployService.Verify" % (ome_ip)
     payload = json.dumps({"TemplateId":"%s","Identifiers":["%s"]}) % (template_id, svc_tag)
@@ -70,6 +71,5 @@ def create_auto_deployment_job():
 
 #code execution
 if __name__ == "__main__":
-    #check_requests_module()
     generate_auto_deployment_id()
     create_auto_deployment_job()

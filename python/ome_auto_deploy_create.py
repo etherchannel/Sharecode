@@ -70,6 +70,5 @@ def create_auto_deployment_job():
 
 #code execution
 if __name__ == "__main__":
-    #check_requests_module()
     generate_auto_deployment_id()
     create_auto_deployment_job()
