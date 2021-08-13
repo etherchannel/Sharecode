@@ -8,7 +8,8 @@
 #   For lab use only.
 
 #import python modules
-import requests, warnings, argparse, json, sys
+import warnings, argparse, json, sys, subprocess, pkg_resources
+import requests
 
 #supress warnings
 warnings.filterwarnings("ignore")
@@ -32,12 +33,12 @@ svc_tag = args["s"]
 template_id = args["t"]
 
 #validate provided service tag
-def verify():
+def generate_auto_deployment_id():
     global autodeployid
     url = "https://%s/api/AutoDeployService/Actions/AutoDeployService.Verify" % (ome_ip)
     payload = json.dumps({"TemplateId":"%s","Identifiers":["%s"]}) % (template_id, svc_tag)
     headers = {'Content-Type': 'application/json'}
-    print("making request for auto deployment id...")
+    print("making request for auto deploy id...")
     response = requests.post(url, headers=headers, data = payload, verify=False, auth=(ome_user, ome_pass))
     response_json = response.json()
     print("status code returned: ",response.status_code)
@@ -47,18 +48,18 @@ def verify():
         autodeployid = response_json['AutoDeployId']
         print("autdeployid value:", autodeployid)
         print("obect type (autdeployid):", type(autodeployid))
-        print("*deployment id generation successful for " + svc_tag + ".")
+        print("*auto deployment id generation successful for " + svc_tag + ".")
     else:
-        print("*auto deployment id request failed for " + svc_tag + ".")
-        print("make sure that an auto deployment job does not already exist.")
+        print("*auto deploy id request failed for " + svc_tag + ".")
+        print("make sure that an auto deploy job does not already exist.")
         sys.exit()
 
 #create auto deploy job
-def request():
+def create_auto_deployment_job():
     url = "https://%s/api/AutoDeployService/AutoDeploy" % (ome_ip)
     payload = json.dumps({"AutoDeployId": autodeployid, "GroupId": None, "NetworkBootIsoModel": {"BootToNetwork": False, "ShareType": "CIFS", "IsoPath": "abc.iso", "ShareDetail": {"IpAddress": "xx.xx.xx.xx", "ShareName": "10.22.33.22", "User": "asdf", "Password": "asdf"}}, "Attributes": []})
     headers = {'Content-Type': 'application/json'}
-    print("using captured auto deployment id to create new auto deploy request...")
+    print("using captured auto deploy id to create new auto deploy request...")
     response = requests.post(url, headers=headers, data = payload, verify=False, auth=('admin', 'P@ssw0rd1'))
     print("status code returned: ",response.status_code)
     print("text returned: ",response.text)
@@ -69,5 +70,6 @@ def request():
 
 #code execution
 if __name__ == "__main__":
-    verify()
-    request()
+    #check_requests_module()
+    generate_auto_deployment_id()
+    create_auto_deployment_job()
