@@ -43,13 +43,13 @@ def verify():
     print("status code returned: ",response.status_code)
     print("text returned: ",response.text)
     if response.status_code == 200:
-        print("capturing auto deployment id details")
+        print("capturing auto deployment id details...")
         autodeployid = response_json['AutoDeployId']
         print("autdeployid value:", autodeployid)
         print("obect type (autdeployid):", type(autodeployid))
-        print("deployment id generation successful for " + svc_tag + ".")
+        print("*deployment id generation successful for " + svc_tag + ".")
     else:
-        print("auto deployment id request failed for " + svc_tag + ".")
+        print("*auto deployment id request failed for " + svc_tag + ".")
         print("make sure that an auto deployment job does not already exist.")
         sys.exit()
 
@@ -60,12 +60,12 @@ def request():
     headers = {'Content-Type': 'application/json'}
     print("using captured auto deployment id to create new auto deploy request...")
     response = requests.post(url, headers=headers, data = payload, verify=False, auth=('admin', 'P@ssw0rd1'))
-    print("status code: ",response.status_code)
+    print("status code returned: ",response.status_code)
     print("text returned: ",response.text)
     if response.text == '0':
-        print("auto deploy job creation successful for " + svc_tag + ".")
+        print("*auto deploy job creation successful for " + svc_tag + ".")
     else:
-        print("auto deploy job creation failed for " + svc_tag + ".")
+        print("*auto deploy job creation failed for " + svc_tag + ".")
 
 #code execution
 if __name__ == "__main__":
