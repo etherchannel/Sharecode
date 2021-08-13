@@ -1,6 +1,6 @@
 #   This script lists auto deploy job details from openmanage enterprise.
 #   Example) py .\ome_auto_deploy_list.py -i 192.168.1.142 -u admin -p P@ssw0rd1
-#   Written using ome 3.6.1 and python 3.9.5.
+#   Written using ome 3.6.1 and python 3.9.5 w/requests module (pip install requests)
 #   Written by rob_smith1@dell.com, mindingmyowndata@gmail.com.
 #   For lab use only.
 

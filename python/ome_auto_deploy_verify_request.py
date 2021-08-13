@@ -3,7 +3,7 @@
 #   It is recommended to first create auto deploy job via gui then run ome_auto_deploy_list.py to identify value for template id.
 #   For boot-to-iso functionality, the payload in request() can be modified with appropriate information.
 #   Example) py.exe .\ome_auto_deploy_verify_request.py -i 192.168.1.142 -u admin -p P@ssw0rd1 -s UUU6FC9 -t 29
-#   Written using ome 3.6.1 and python 3.9.5.
+#   Written using ome 3.6.1 and python 3.9.5 w/requests module (pip install requests)
 #   Written by rob_smith1@dell.com, mindingmyowndata@gmail.com.
 #   For lab use only.
 
@@ -37,13 +37,20 @@ def verify():
     url = "https://%s/api/AutoDeployService/Actions/AutoDeployService.Verify" % (ome_ip)
     payload = json.dumps({"TemplateId":"%s","Identifiers":["%s"]}) % (template_id, svc_tag)
     headers = {'Content-Type': 'application/json'}
+    print("making request for auto deployment id...")
     response = requests.post(url, headers=headers, data = payload, verify=False, auth=(ome_user, ome_pass))
     response_json = response.json()
+    print("status code returned: ",response.status_code)
+    print("text returned: ",response.text)
     if response.status_code == 200:
+        print("capturing auto deployment id details")
         autodeployid = response_json['AutoDeployId']
-        print("Service tag verification successful for " + svc_tag + ".")
+        print("autdeployid value:", autodeployid)
+        print("obect type (autdeployid):", type(autodeployid))
+        print("deployment id generation successful for " + svc_tag + ".")
     else:
-        print("Service tag verification failed for " + svc_tag + ".  Ensure service tag syntax is valid and that an auto deploy job does not already exist.")
+        print("auto deployment id request failed for " + svc_tag + ".")
+        print("make sure that an auto deployment job does not already exist.")
         sys.exit()
 
 #create auto deploy job
@@ -51,11 +58,14 @@ def request():
     url = "https://%s/api/AutoDeployService/AutoDeploy" % (ome_ip)
     payload = json.dumps({"AutoDeployId": autodeployid, "GroupId": None, "NetworkBootIsoModel": {"BootToNetwork": False, "ShareType": "CIFS", "IsoPath": "abc.iso", "ShareDetail": {"IpAddress": "xx.xx.xx.xx", "ShareName": "10.22.33.22", "User": "asdf", "Password": "asdf"}}, "Attributes": []})
     headers = {'Content-Type': 'application/json'}
+    print("using captured auto deployment id to create new auto deploy request...")
     response = requests.post(url, headers=headers, data = payload, verify=False, auth=('admin', 'P@ssw0rd1'))
+    print("status code: ",response.status_code)
+    print("text returned: ",response.text)
     if response.text == '0':
-        print("Auto Deploy job creation successful for " + svc_tag + ".")
+        print("auto deploy job creation successful for " + svc_tag + ".")
     else:
-        print("Auto Deploy job creation failed for " + svc_tag + ".")
+        print("auto deploy job creation failed for " + svc_tag + ".")
 
 #code execution
 if __name__ == "__main__":
