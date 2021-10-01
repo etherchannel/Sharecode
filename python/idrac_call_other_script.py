@@ -2,7 +2,7 @@
 #it is an example of how to pull a service tag from idrac and then pass it as an argument for a second script.
 #ome_server_initiated_discovery_node_info.py resides in the same directory.
 #it is intented for lab use only.
-#written by rob_smith1@dell.com
+#written by rob_smith1@dell.com, mindingmyowndata@gmail.com.
 #example) py.exe .\idrac_get_serial.py -ip 192.168.1.126 -u root -p calvin
 
 
