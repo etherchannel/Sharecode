@@ -36,6 +36,7 @@ def serial():
 
 def callotherscript():
     otherscript = 'py.exe .\ome_server_initiated_discovery_node_info.py -i %s -u %s -p %s -s %s -r root -c calvin' % (ome_ip, ome_user, ome_pass, serial)
+    print('This is the call being made to execute the second script: '+otherscript)
     subprocess.run(otherscript)
 
 if __name__ == "__main__":
