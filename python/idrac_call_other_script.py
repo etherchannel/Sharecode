@@ -3,7 +3,7 @@
 #ome_server_initiated_discovery_node_info.py resides in the same directory.
 #it is intented for lab use only.
 #written by rob_smith1@dell.com, mindingmyowndata@gmail.com.
-#example) py.exe .\idrac_get_serial.py -ip 192.168.1.126 -u root -p calvin
+#example) py.exe .\idrac_call_other_script.py -ip 192.168.1.126 -u root -p calvin
 
 
 import requests, json, sys, re, time, warnings, argparse, subprocess
