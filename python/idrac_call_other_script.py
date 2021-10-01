@@ -1,5 +1,5 @@
 #script was written and tested using python 3.9.5 targeting a dell poweredge m620 running idrac firmware 2.65.65.65
-#script pulls service tag from target idrac, calls second script to push discovery (s.i.d.), passes tag as argument for second script
+#script pulls service tag from target idrac, calls second script to push discovery (s.i.d.) to ome, passes service tag as argument for second script
 #second script, ome_server_initiated_discovery_node_info.py, must reside in the same directory as this script.
 #intented for lab use only.
 #written by rob_smith1@dell.com, mindingmyowndata@gmail.com.
