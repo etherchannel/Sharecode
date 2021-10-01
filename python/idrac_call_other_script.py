@@ -5,7 +5,6 @@
 #written by rob_smith1@dell.com, mindingmyowndata@gmail.com.
 #example) py.exe .\idrac_call_other_script.py -ii 192.168.1.126 -iu root -ip calvin -oi 192.168.1.141 -ou admin -op P@ssw0rd
 
-
 import requests, json, sys, re, time, warnings, argparse, subprocess
 warnings.filterwarnings("ignore")
 
