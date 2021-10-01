@@ -7,7 +7,6 @@
 
 
 import requests, json, sys, re, time, warnings, argparse, subprocess
-#import ome_server_initiated_discovery_node_info
 warnings.filterwarnings("ignore")
 
 parser=argparse.ArgumentParser(description="")
