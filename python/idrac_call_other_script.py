@@ -32,7 +32,7 @@ def serial():
     response = requests.get(url,verify=False,auth=(idrac_user, idrac_pass))
     data = response.json()
     serial = data['SKU']
-    print(serial)
+    print('The service tag for this system is', serial+'.')
 
 def callotherscript():
     otherscript = 'py.exe .\ome_server_initiated_discovery_node_info.py -i %s -u %s -p %s -s %s -r root -c calvin' % (ome_ip, ome_user, ome_pass, serial)
