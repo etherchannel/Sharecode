@@ -2,7 +2,7 @@
 #   Arguments for ome ip, ome username, ome password, template id, and device service tag are required.
 #   It is recommended to first create auto deploy job via gui then run ome_auto_deploy_list.py to identify value for template id.
 #   For boot-to-iso functionality, the payload in request() can be modified with appropriate information.
-#   Example) py.exe .\ome_auto_deploy_verify_request.py -i 192.168.1.142 -u admin -p P@ssw0rd1 -s UUU6FC9 -t 29
+#   Example) py.exe .\ome_auto_deploy_create.py -i 192.168.1.142 -u admin -p P@ssw0rd1 -s UUU6FC9 -t 29
 #   Written using ome 3.6.1 and python 3.9.5 w/requests module (pip install requests)
 #   Written by rob_smith1@dell.com, mindingmyowndata@gmail.com.
 #   For lab use only.
@@ -47,10 +47,10 @@ def generate_auto_deployment_id():
         print("capturing auto deployment id details...")
         autodeployid = response_json['AutoDeployId']
         print("autdeployid value:", autodeployid)
-        print("obect type (autdeployid):", type(autodeployid))
-        print("*auto deployment id generation successful for " + svc_tag + ".")
+        print("object type (autdeployid):", type(autodeployid))
+        print("-->auto deployment id generation successful for " + svc_tag + ".")
     else:
-        print("*auto deploy id request failed for " + svc_tag + ".")
+        print("-->auto deploy id request failed for " + svc_tag + ".")
         print("make sure that an auto deploy job does not already exist.")
         sys.exit()
 
@@ -60,13 +60,13 @@ def create_auto_deployment_job():
     payload = json.dumps({"AutoDeployId": autodeployid, "GroupId": None, "NetworkBootIsoModel": {"BootToNetwork": False, "ShareType": "CIFS", "IsoPath": "abc.iso", "ShareDetail": {"IpAddress": "xx.xx.xx.xx", "ShareName": "10.22.33.22", "User": "asdf", "Password": "asdf"}}, "Attributes": []})
     headers = {'Content-Type': 'application/json'}
     print("using captured auto deploy id to create new auto deploy request...")
-    response = requests.post(url, headers=headers, data = payload, verify=False, auth=('admin', 'P@ssw0rd1'))
+    response = requests.post(url, headers=headers, data = payload, verify=False, auth=(ome_user, ome_pass))
     print("status code returned: ",response.status_code)
     print("text returned: ",response.text)
     if response.text == '0':
-        print("*auto deploy job creation successful for " + svc_tag + ".")
+        print("-->auto deploy job creation successful for " + svc_tag + ".")
     else:
-        print("*auto deploy job creation failed for " + svc_tag + ".")
+        print("-->auto deploy job creation failed for " + svc_tag + ".")
 
 #code execution
 if __name__ == "__main__":
