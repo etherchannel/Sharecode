@@ -8,7 +8,7 @@
 import requests, warnings, argparse, json, sys
 
 #supress warnings
-warnings.filterwarnings("ignore")
+warnings.filterwarnings('ignore')
 
 #define arguments and help messages
 parser = argparse.ArgumentParser(description='List OME Auto Deploy Jobs')
@@ -29,4 +29,6 @@ url = "https://%s/api/AutoDeployService/Targets" % (ome_ip)
 payload = {}
 headers = {'Content-Type': 'application/json'}
 response = requests.get(url, headers=headers, data = payload, verify=False, auth=(ome_user, ome_pass))
-print(response.text)
+data = response.json()
+data_pretty = json.dumps(data, indent=2)
+print(" Status Code: ", response.status_code, "\n", "Returned Data:\n", data_pretty)

@@ -38,20 +38,18 @@ def generate_auto_deployment_id():
     url = "https://%s/api/AutoDeployService/Actions/AutoDeployService.Verify" % (ome_ip)
     payload = json.dumps({"TemplateId":"%s","Identifiers":["%s"]}) % (template_id, svc_tag)
     headers = {'Content-Type': 'application/json'}
-    print("making request for auto deploy id...")
+    print("Submitting request for Deployment ID for service tag " + svc_tag)
     response = requests.post(url, headers=headers, data = payload, verify=False, auth=(ome_user, ome_pass))
-    response_json = response.json()
-    print("status code returned: ",response.status_code)
-    print("text returned: ",response.text)
+    data = response.json()
+    data_pretty = json.dumps(data, indent=2)
+    print(" Status Code: ", response.status_code, "\n", "Returned Data:\n", data_pretty)
     if response.status_code == 200:
-        print("capturing auto deployment id details...")
-        autodeployid = response_json['AutoDeployId']
-        print("autdeployid value:", autodeployid)
-        print("object type (autdeployid):", type(autodeployid))
-        print("-->auto deployment id generation successful for " + svc_tag + ".")
+        autodeployid = data['AutoDeployId']
+        print("Deployment ID " + str(autodeployid) + " captured")
+        #print("ID object type:", type(autodeployid))
     else:
-        print("-->auto deploy id request failed for " + svc_tag + ".")
-        print("make sure that an auto deploy job does not already exist.")
+        print("Deployment ID request for " + svc_tag + " failed")
+        print("Ensure sure that an Auto Deploy job does not already exist and that this system has not already been discovered by OME")
         sys.exit()
 
 #create auto deploy job
@@ -59,14 +57,18 @@ def create_auto_deployment_job():
     url = "https://%s/api/AutoDeployService/AutoDeploy" % (ome_ip)
     payload = json.dumps({"AutoDeployId": autodeployid, "GroupId": None, "NetworkBootIsoModel": {"BootToNetwork": False, "ShareType": "CIFS", "IsoPath": "abc.iso", "ShareDetail": {"IpAddress": "xx.xx.xx.xx", "ShareName": "10.22.33.22", "User": "asdf", "Password": "asdf"}}, "Attributes": []})
     headers = {'Content-Type': 'application/json'}
-    print("using captured auto deploy id to create new auto deploy request...")
+    payload_json = json.loads(payload)
+    payload_pretty = json.dumps(payload_json, indent=2)
+    print("Submitting request for Auto Deploy job for " + svc_tag)
+    print("Payload sent:\n", payload_pretty)
     response = requests.post(url, headers=headers, data = payload, verify=False, auth=(ome_user, ome_pass))
-    print("status code returned: ",response.status_code)
-    print("text returned: ",response.text)
+    data = response.json()
+    data_pretty = json.dumps(data, indent=2)
+    print(" Status Code: ", response.status_code, "\n", "Returned Data:\n", data_pretty)
     if response.text == '0':
-        print("-->auto deploy job creation successful for " + svc_tag + ".")
+        print("Auto Deploy request successful for " + svc_tag)
     else:
-        print("-->auto deploy job creation failed for " + svc_tag + ".")
+        print("Auto Deploy request failed for " + svc_tag)
 
 #code execution
 if __name__ == "__main__":
