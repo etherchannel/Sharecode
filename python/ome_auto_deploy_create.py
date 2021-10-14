@@ -38,7 +38,7 @@ def generate_auto_deployment_id():
     url = "https://%s/api/AutoDeployService/Actions/AutoDeployService.Verify" % (ome_ip)
     payload = json.dumps({"TemplateId":"%s","Identifiers":["%s"]}) % (template_id, svc_tag)
     headers = {'Content-Type': 'application/json'}
-    print("Submitting request for Deployment ID for " + svc_tag)
+    print("Submitting Deployment ID request for " + svc_tag + " (prerequisite for Auto Deploy request)")
     response = requests.post(url, headers=headers, data = payload, verify=False, auth=(ome_user, ome_pass))
     data = response.json()
     data_pretty = json.dumps(data, indent=2)
@@ -49,7 +49,8 @@ def generate_auto_deployment_id():
         #print("ID object type:", type(autodeployid))
     else:
         print("Deployment ID request for " + svc_tag + " failed")
-        print("Ensure sure that argument data is valid, that an Auto Deploy job does not already exist, and that target system has not already been discovered by OME")
+        print("Troubleshooting Tip: Ensure sure that the supplied script argument data is valid, that an Auto Deploy job does not already exist for this system,", \
+        "or that target system has not already been discovered by OME")
         sys.exit()
 
 #create auto deploy job
@@ -60,8 +61,8 @@ def create_auto_deployment_job():
     headers = {'Content-Type': 'application/json'}
     payload_json = json.loads(payload)
     payload_pretty = json.dumps(payload_json, indent=2)
-    print("Submitting request for Auto Deploy job for " + svc_tag)
-    print("Payload sent:\n", payload_pretty)
+    print("Submitting Auto Deploy job request for " + svc_tag)
+    print("Payload data sent with request:\n", payload_pretty)
     response = requests.post(url, headers=headers, data = payload, verify=False, auth=(ome_user, ome_pass))
     data = response.json()
     data_pretty = json.dumps(data, indent=2)
