@@ -7,7 +7,7 @@
     url_root: https://{{ inventory_hostname }}
     device_service: /api/DeviceService/Devices
     device_id_url: "({{ device_id }})"
-    catalog_name: "catalog2"
+    #catalog_name: "catalog"
 
   collections: dellemc.openmanage
 
@@ -210,8 +210,10 @@
         var: ome_delete_out.msg
       tags: debug
 
-# example) ansible-playbook ome_querybytag_deletequeue_resetidrac_createbaselineupdate.yml -i inventory.yml -e "targets=ome svc_tag=6FTN9Z1"
-# example) ansible-playbook ome_querybytag_deletequeue_resetidrac_createbaselineupdate.yml -i inventory.yml -t get_info,set_fact,delete_jobs,rest_idrac,pause,lc_status -e "targets=ome svc_tag=6FTN9Z1"
-# example) ansible-playbook ome_querybytag_deletequeue_resetidrac_createbaselineupdate.yml -i inventory.yml --skip-tags reset_idrac -e "targets=ome svc_tag=6FTN9Z1"
+# playbook works through ome to clear job queue, reset idrac, create unique firmware baseline from specified catalog, update firmware if non-compliant, and then delete baseline.
+# pass in service tag of target system and name of catalog to associate firmware baseline with in as extra variables (also references inventory group called ome that contains ome connection info )
+# example) ansible-playbook ome_querybytag_deletequeue_resetidrac_createbaselineupdate.yml -i inventory.yml -e "targets=ome svc_tag=6FTN9Z1 catalog_name=catalog"
+# example) ansible-playbook ome_querybytag_deletequeue_resetidrac_createbaselineupdate.yml -i inventory.yml -t get_info,set_fact,delete_jobs,rest_idrac,pause,lc_status -e "targets=ome svc_tag=6FTN9Z1 catalog_name=catalog"
+# example) ansible-playbook ome_querybytag_deletequeue_resetidrac_createbaselineupdate.yml -i inventory.yml --skip-tags reset_idrac -e "targets=ome svc_tag=6FTN9Z1 catalog_name=catalog"
 # example) /home/rob/playbooks/Mycode/ansible/dev/052722
 ...
