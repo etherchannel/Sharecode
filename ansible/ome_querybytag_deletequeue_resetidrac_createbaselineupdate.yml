@@ -1,5 +1,5 @@
 ---
-- name: convert device id to ip address
+- name: query ip from service tag, delete job queue, reset idrac, create firmware baseline, update 
   hosts: "{{ targets }}"
   connection: local
   gather_facts: False
