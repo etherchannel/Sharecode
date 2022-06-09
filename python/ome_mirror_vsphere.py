@@ -14,16 +14,17 @@ def main():
         for b in a.items():
             print("".ljust(100, '-'))
             GroupName = b[0]
-            print("GROUP \""+b[0]+"\" will be created if not already present.") #print clusters.[*].[0] <-key
+            print("GROUP \"" + b[0] + "\" will be created if not already present.") #print clusters.[*].[0] <-key
             headers = {'content-type': 'application/json'}
             url = "https://192.168.1.141/api/GroupService/Actions/GroupService.CreateGroup"
-            payload = "{\"GroupModel\":{\"Id\":0,\"Name\":\"%s\",\"Description\":\"\",\"GlobalStatus\":0,\"DefinitionId\":0,\"MembershipTypeId\":12,\"ParentId\":1021}}" % (b[0]) #hard coded parent group id
+            #payload = "{\"GroupModel\":{\"Id\":0,\"Name\":\"%s\",\"Description\":\"\",\"GlobalStatus\":0,\"DefinitionId\":0,\"MembershipTypeId\":12,\"ParentId\":1021}}" % (b[0]) #hard coded parent group id
+            payload = json.dumps({"GroupModel":{"Id":0,"Name":"%s","Description":"","GlobalStatus":0,"DefinitionId":0,"MembershipTypeId":12,"ParentId":1021}}) % (b[0]) #hard coded parent group id "ParentId"
             response = requests.post(url, verify=False, headers=headers, data=payload, auth=('admin', 'P@ssw0rd'))
             status_code = response.status_code
             if status_code == 200:
                 GroupId = response.text
             else:
-                print("GROUP is already present.")
+                print("GROUP \"" + GroupName + "\" is already present.")
                 get_group_id()
                 GroupId = GId
             for c in b[1].items():
@@ -40,13 +41,18 @@ def main():
                                 DeviceID = e["Id"]
                                 url3 = "https://192.168.1.141/api/GroupService/Actions/GroupService.AddMemberDevices"
                                 payload = "{ \"GroupId\": %s, \"MemberDeviceIds\" : [%s]}" % (GroupId, DeviceID)
+                                #payload = json.dumps({"GroupId": "%s","MemberDeviceIds": "[%s]"}) % (GroupId, DeviceID)
                                 headers = {'Content-Type': 'application/json'}
                                 response = requests.post(url3, verify=False, headers=headers, data=payload, auth=('admin', 'P@ssw0rd'))
+                                #print(payload)
+                                #print(response.status_code)
+                                #print(response.content)
                                 if response.status_code == 204:
                                     print("HOST \"" + d + "\" was added to group " + GroupName)
                                 elif response.status_code != 200:
                                     print("HOST \"" + d + "\" is already a member of group.")
 
+#translate group name to id
 def get_group_id():
     global GId
     url4 = "https://192.168.1.141/api/GroupService/Groups"

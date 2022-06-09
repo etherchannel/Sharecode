@@ -1,0 +1,43 @@
+{
+
+"clusters":[
+{
+  "sdc-cai-app00-lin-nonprod-az1-01":{
+    "hosts":[
+      "esxi01.homelab.local",
+      "esxi02.homelab.local",
+      "esxi03.homelab.local",
+      "sdcaz1esx054.coxautoinc.com",
+      "sdcaz1esx055.coxautoinc.com",
+      "sdcaz1esx056.coxautoinc.com",
+      "sdcaz1esx060.coxautoinc.com",
+      "sdcaz1esx061.coxautoinc.com",
+      "sdcaz1esx062.coxautoinc.com",
+      "sdcaz1esx077.coxautoinc.com",
+      "sdcaz1esx078.coxautoinc.com",
+      "sdcaz1esx079.coxautoinc.com"
+    ]
+  }
+},
+{
+  "sdc-cai-app00-lin-prod-az1-01":{
+    "hosts":[
+      "esxi04.homelab.local",
+      "esxi05.homelab.local",
+      "sdcaz1esx080.coxautoinc.com",
+      "sdcaz1esx081.coxautoinc.com",
+      "sdcaz1esx082.coxautoinc.com",
+      "sdcaz1esx083.coxautoinc.com",
+      "sdcaz1esx084.coxautoinc.com",
+      "sdcaz1esx085.coxautoinc.com",
+      "sdcaz1esx115.coxautoinc.com",
+      "sdcaz1esx125.coxautoinc.com",
+      "sdcaz1esx140.coxautoinc.com"
+    ]
+  }
+}
+
+
+]
+
+}
