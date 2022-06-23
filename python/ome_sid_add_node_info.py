@@ -59,7 +59,6 @@ def parse_node_data():
         #if a['Status'] == 2:
         #if a['Status'] == 6:
             ServiceTag = a['ServiceTag']
-            print(ServiceTag)
             pass_in_creds()
 
 #pass service tags and credentials to ome
