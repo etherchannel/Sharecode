@@ -32,7 +32,7 @@ base_uri = "https://%s/api" % (ome_ip)
 signal_nodes = "/DiscoveryConfigService/SignaledNodes"
 node_info = "/DiscoveryConfigService/Actions/DiscoveryConfigService.UploadNodeInfo"
 
-#open json file and save contents as variable called data
+#open json file and save contents as variable
 def load_data_file():
     global value
     with open('sid.json') as file:
