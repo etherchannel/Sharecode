@@ -1,3 +1,4 @@
+# looks up servers that have announced themselves to ome, filters out all but those that have NOT been discovered, passes credentials needed for discovery
 # exmple) python.exe .\ome_sid_add_node_info.py -i <OME IP> -u <OME USER> -p <OME PASSWORD> -r <IDRAC USER> -c <IDRAC PASSWORD>
 # exmple) python.exe .\ome_sid_add_node_info.py -i 192.168.1.141 -u admin -p P@ssw0rd1 -r root -c calvin
 #import python modules
