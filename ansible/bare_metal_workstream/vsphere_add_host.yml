@@ -1,0 +1,40 @@
+---
+- name: add host to vcenter cluster
+  hosts: "{{ targets }}"
+  connection: local
+  gather_facts: False
+  vars:
+    url_root: https://{{ inventory_hostname }}
+    device_service: /api/DeviceService/Devices
+    device_id_url: "({{ device_id }})"
+    profile_service: /api/ProfileService/Profiles
+    profile_detail_url: "({{ profile_id }})"
+    ome_user: admin
+    ome_password: P@ssw0rd
+    esxi_user: root
+    esxi_password: p@ssw0rd
+
+  collections:
+    - ansible.builtin
+    - community.vmware
+
+  tasks:
+    - name: add host to vcenter cluster
+      vmware_host:
+        hostname: '{{ inventory_hostname }}'
+        username: '{{ vcenter_user }}'
+        password: '{{ vcenter_password }}'
+        datacenter: Datacenter1
+        cluster: Cluster1
+        esxi_hostname: '{{ esxi_host }}'
+        esxi_username: '{{ esxi_user }}'
+        esxi_password: '{{ esxi_password }}'
+        state: present
+        add_connected: True
+        validate_certs: False
+      #delegate_to: localhost
+
+# example) ansible-playbook vsphere_add_host.yml -i inventory.yml -e "targets=vcenter esxi_host=192.168.1.137" -vvv
+# example) ansible-playbook vsphere_add_host.yml -i inventory.yml -e "targets=vcenter esxi_host=192.168.1.138" -vvv
+# /home/rob/playbooks/Mycode/ansible/dev/102722
+...

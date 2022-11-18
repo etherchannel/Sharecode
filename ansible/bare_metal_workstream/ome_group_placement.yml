@@ -1,0 +1,29 @@
+---
+- name: server profile assignment and group placement
+  hosts: "{{ targets }}"
+  connection: local
+  gather_facts: False
+  vars:
+    ome_user: admin
+    ome_password: P@ssw0rd
+
+  collections:
+    - dellemc.openmanage
+    - ansible.builtin
+
+  tasks:
+    - name: add devices to staging group
+      ome_device_group:
+        hostname: "{{ inventory_hostname }}"
+        username: "{{ ome_user }}"
+        password: "{{ ome_password }}"
+        validate_certs: false
+        name: "Staging Servers"
+        device_service_tags:
+          - "{{ svc_tag }}"
+      tags:
+        - assign_group
+
+# example) ansible-playbook ome_group_placement.yml -i inventory.yml -e "targets=ome svc_tag=6FTN9Z1"
+# /home/rob/playbooks/Mycode/ansible/dev/102722
+...

@@ -1,0 +1,34 @@
+---
+- name: server template assignment and group placement
+  hosts: "{{ targets }}"
+  connection: local
+  gather_facts: False
+  vars:
+    url_root: https://{{ inventory_hostname }}
+    nodeinfo_url: /api/DiscoveryConfigService/Actions/DiscoveryConfigService.UploadNodeInfo
+    ome_user: admin
+    ome_password: P@ssw0rd
+
+  collections:
+    - dellemc.openmanage
+    - ansible.builtin
+
+  tasks:
+    - name: capture device info
+      uri:
+        url: "{{ url_root }}{{ nodeinfo_url }}"
+        user: "{{ ome_user }}"
+        password: "{{ ome_password }}"
+        method: POST
+        headers:
+          content-type: application/json
+        body: {"AnnouncedTarget": [{"ServiceTag": "{{ svc_tag }}", "UserName": "root", "Password": "calvin", "CredentialType": "WSMAN"}]}
+        body_format: json
+        validate_certs: no
+        status_code: 200
+        return_content: yes
+      register: result
+
+# example)  ansible-playbook ome_discover_announced.yml -i inventory.yml -e targets=ome -e svc_tag=6FTN9Z1
+# /home/rob/playbooks/Mycode/ansible/dev/102722
+...

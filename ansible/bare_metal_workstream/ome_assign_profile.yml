@@ -1,0 +1,131 @@
+---
+- name: server profile assignment and group placement
+  hosts: "{{ targets }}"
+  connection: local
+  gather_facts: False
+  vars:
+    url_root: https://{{ inventory_hostname }}
+    device_service: /api/DeviceService/Devices
+    device_id_url: "({{ device_id }})"
+    profile_service: /api/ProfileService/Profiles
+    profile_detail_url: "({{ profile_id }})"
+    ome_user: admin
+    ome_password: P@ssw0rd
+
+  collections:
+    - dellemc.openmanage
+    - ansible.builtin
+
+  tasks:
+    - name: capture device info
+      uri:
+        url: "{{ url_root }}{{ device_service }}"
+        user: "{{ ome_user }}"
+        password: "{{ ome_password }}"
+        method: GET
+        headers:
+          content-type: application/json
+        validate_certs: no
+        status_code: 200
+        return_content: no
+      register: result
+      vars:
+      tags:
+         - get_info
+
+    - name: capture device id
+      set_fact:
+        device_id: "{{ result.json.value | json_query(jmesquery) }}"
+      vars:
+        jmesquery: "[? DeviceServiceTag == {{ tck }}{{ svc_tag }}{{ tck }}].{Id:Id}[0].Id"
+        tck: "'"
+      tags:
+         - get_info
+
+    - name: capture device idrac info
+      uri:
+        url: "{{ url_root }}{{ device_service }}{{ device_id_url }}"
+        user: "{{ ome_user }}"
+        password: "{{ ome_password }}"
+        method: GET
+        headers:
+          content-type: application/json
+        validate_certs: no
+        status_code: 200
+        return_content: no
+      register: result
+      vars:
+      tags:
+         - get_info
+
+    - name: filter out ip address from idrac info
+      set_fact:
+        device_info: "{{ result | json_query(jmesquery) }}"
+      vars:
+        jmesquery: "json.{DeviceServiceTag: DeviceServiceTag, DeviceName: DeviceName, NetworkAddress: DeviceManagement[? ManagementProfile[0].AgentName == 'iDRAC'].NetworkAddress[] | [0]}"
+      tags:
+         - get_info
+
+    - name: filter info down to idrac network address
+      set_fact:
+        NetworkAddress: "{{ device_info.NetworkAddress }}"
+      tags:
+         - get_info
+
+    - name: create server profile
+      ome_profile:
+        hostname:   "{{ inventory_hostname }}"
+        username: "{{ ome_user }}"
+        password:  "{{ ome_password }}"
+        validate_certs: false
+        template_name: "iDRAC Template"
+        name_prefix: "{{ svc_tag }}"
+        number_of_profiles: 1
+      register: result
+      tags:
+        - server_profile
+
+    - name: capture profile id
+      set_fact:
+        profile_id: "{{ result.profile_ids[0] }}"
+      tags:
+        - server_profile
+
+    - name: capture profile details
+      uri:
+        url: "{{ url_root }}{{ profile_service }}{{ profile_detail_url }}"
+        user: "{{ ome_user }}"
+        password: "{{ ome_password }}"
+        method: GET
+        headers:
+          content-type: application/json
+        validate_certs: no
+        status_code: 200
+        return_content: no
+      register: result
+      vars:
+      tags:
+        - server_profile
+
+    - name: capture profile name
+      set_fact:
+        profile_name: "{{ result.json.ProfileName }}"
+      tags:
+        - server_profile
+
+    - name: assign server profile
+      ome_profile:
+        hostname:   "{{ inventory_hostname }}"
+        username: "{{ ome_user }}"
+        password:  "{{ ome_password }}"
+        validate_certs: false
+        command: assign
+        name: "{{ profile_name }}"
+        device_id: "{{ device_id }}"
+      register: result
+      tags:
+        - server_profile
+
+# example) ansible-playbook ome_assign_profile.yml -i inventory.yml -e "targets=ome svc_tag=6FTN9Z1"
+# /home/rob/playbooks/Mycode/ansible/dev/102722
+...

@@ -1,0 +1,113 @@
+---
+- name: discover server
+  hosts: "{{ targets }}"
+  connection: local
+  gather_facts: False
+  vars:
+    url_root: https://{{ inventory_hostname }}
+    device_service: /api/DeviceService/Devices
+    device_id_url: "({{ device_id }})"
+    ome_user: admin
+    ome_password: P@ssw0rd
+    share1: 192.168.1.180:/share/
+    share2: 192.168.1.180:/share2
+    share_user: administrator
+    share_password: P@ssw0rd
+    iso1: ISO_IMAGE_1823624133.iso
+    idrac_user: root
+    idrac_password: calvin
+
+  collections:
+    - dellemc.openmanage
+    - ansible.builtin
+
+  tasks:
+    - name: capture device info
+      uri:
+        url: "{{ url_root }}{{ device_service }}"
+        user: "{{ ome_user }}"
+        password: "{{ ome_password }}"
+        method: GET
+        headers:
+          content-type: application/json
+        validate_certs: no
+        status_code: 200
+        return_content: no
+      register: result
+      vars:
+      tags:
+         - get_info
+
+    - name: capture device id
+      set_fact:
+        device_id: "{{ result.json.value | json_query(jmesquery) }}"
+      vars:
+        jmesquery: "[? DeviceServiceTag == {{ tck }}{{ svc_tag }}{{ tck }}].{Id:Id}[0].Id"
+        tck: "'"
+      tags:
+         - get_info
+
+    - name: capture device idrac info
+      uri:
+        url: "{{ url_root }}{{ device_service }}{{ device_id_url }}"
+        user: "{{ ome_user }}"
+        password: "{{ ome_password }}"
+        method: GET
+        headers:
+          content-type: application/json
+        validate_certs: no
+        status_code: 200
+        return_content: no
+      register: result
+      vars:
+      tags:
+         - get_info
+
+    - name: filter out ip address from idrac info
+      set_fact:
+        device_info: "{{ result | json_query(jmesquery) }}"
+      vars:
+        jmesquery: "json.{DeviceServiceTag: DeviceServiceTag, DeviceName: DeviceName, NetworkAddress: DeviceManagement[? ManagementProfile[0].AgentName == 'iDRAC'].NetworkAddress[] | [0]}"
+      tags:
+         - get_info
+
+    - name: filter info down to idrac network address
+      set_fact:
+        NetworkAddress: "{{ device_info.NetworkAddress }}"
+      tags:
+         - get_info
+
+    - name: create server discovery job
+      ome_discovery:
+        hostname: "{{ inventory_hostname }}"
+        username: "{{ ome_user }}"
+        password: "{{ ome_password }}"
+        validate_certs: false
+        discovery_job_name: "{{ svc_tag }}"
+        discovery_config_targets:
+          - network_address_detail:
+              - "{{ NetworkAddress  }}"
+            device_types:
+              - SERVER
+            wsman:
+              username: "{{ idrac_user }}"
+              password: "{{ idrac_password }}"
+      tags:
+        - create_job
+
+    - name: delete server discovery job
+      ome_discovery:
+        hostname: "{{ inventory_hostname }}"
+        username: "{{ ome_user }}"
+        password: "{{ ome_password }}"
+        validate_certs: false
+        discovery_job_name: "{{ svc_tag }}"
+        state: absent
+      tags:
+        - delete_job
+
+
+# example) ansible-playbook ome_discover_server.yml -i inventory.yml -e "targets=ome svc_tag=6FTN9Z1"
+# example) ansible-playbook ome_discover_server.yml -i inventory.yml --skip-tags delete_job -e "targets=ome svc_tag=6FTN9Z1"
+# /home/rob/playbooks/Mycode/ansible/dev/102722
+...

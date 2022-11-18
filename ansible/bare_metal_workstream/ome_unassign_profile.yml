@@ -1,0 +1,34 @@
+---
+- name: server profile assignment and group placement
+  hosts: "{{ targets }}"
+  connection: local
+  gather_facts: False
+  vars:
+    url_root: https://{{ inventory_hostname }}
+    device_service: /api/DeviceService/Devices
+    device_id_url: "({{ device_id }})"
+    profile_service: /api/ProfileService/Profiles
+    profile_detail_url: "({{ profile_id }})"
+    ome_user: admin
+    ome_password: P@ssw0rd
+
+  collections:
+    - dellemc.openmanage
+    - ansible.builtin
+
+  tasks:
+    - name: unassign profile using filters
+      ome_profile:
+        hostname:   "{{ inventory_hostname }}"
+        username: "{{ ome_user }}"
+        password:  "{{ ome_password }}"
+        validate_certs: false
+        command: unassign
+        filters:
+          SelectAll: True
+          Filters: =contains(ProfileName,'iDRAC Template')
+      ignore_errors: True
+      
+# example) ansible-playbook ome_assign_profile.yml -i inventory.yml -e "targets=ome svc_tag=6FTN9Z1"
+# /home/rob/playbooks/Mycode/ansible/dev/102722
+...

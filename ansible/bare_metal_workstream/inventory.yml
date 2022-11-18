@@ -1,0 +1,62 @@
+all:
+  hosts:
+    192.168.1.126:
+    192.168.1.127:
+    192.168.1.128:
+  vars:
+    idrac_user: root
+    idrac_password: calvin
+    scp1: 192.168.1.128_20200326_230356_scp.json
+    share1: 192.168.1.180:/share/
+    share2: 192.168.1.180:/share2
+    share_user: administrator
+    share_password: P@ssw0rd
+    iso1: ISO_IMAGE_1823624133.iso
+  children:
+    idracs:
+      hosts:
+        192.168.1.126:
+        192.168.1.127:
+        192.168.1.128:
+      vars:
+        idrac_user: root
+        idrac_password: calvin
+        scp1: 192.168.1.128_20200326_230356_scp.json
+        share1: 192.168.1.180:/share
+        share2: 192.168.1.180:/share2
+        share_user: administrator
+        share_password: P@ssw0rd
+        iso1: ISO_IMAGE_1823624133.iso
+    idracs_qa:
+      hosts:
+        192.168.1.127:
+        192.168.1.128:
+      vars:
+        idrac_user: root
+        idrac_password: calvin
+        scp1: 192.168.1.128_20200326_230356_scp.json
+        share1: 192.168.1.180:/share
+        share2: 192.168.1.180:/share2
+        share_user: administrator
+        share_password: P@ssw0rd
+        iso1: ISO_IMAGE_1823624133.iso
+    ome:
+      hosts:
+        192.168.1.141:
+      vars:
+        ome_user: admin
+        ome_password: P@ssw0rd
+    vcenter:
+      hosts:
+        192.168.1.149:
+      vars:
+        vcenter_user: administrator@vsphere.local
+        vcenter_password: P@ssw0rd
+    esxi:
+      hosts:
+        192.168.1.136:
+        192.168.1.137:
+        192.168.1.138:
+      vars:
+        esxi_user: root
+        esxi_password: p@ssw0rd
