@@ -26,7 +26,6 @@
         password: '{{ vcenter_password }}'
         datacenter: Datacenter1
         cluster: Cluster1
-        #esxi_hostname: '192.168.1.138'
         esxi_hostname: "{{ esxi_host}}"
         esxi_username: '{{ esxi_user }}'
         esxi_password: '{{ esxi_password }}'

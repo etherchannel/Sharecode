@@ -10,7 +10,6 @@
     ome_user: admin
     ome_password: P@ssw0rd
     share1: 192.168.1.180:/share/
-    share2: 192.168.1.180:/share2
     share_user: administrator
     share_password: P@ssw0rd
     iso1: ISO_IMAGE_1823624133.iso
