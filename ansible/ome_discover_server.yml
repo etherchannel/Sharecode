@@ -1,5 +1,5 @@
 ---
-- name: discover server
+- name: discover server via discovery job
   hosts: "{{ targets }}"
   connection: local
   gather_facts: False

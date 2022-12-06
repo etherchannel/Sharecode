@@ -1,5 +1,5 @@
 ---
-- name: server profile assignment and group placement
+- name: server profile assignment
   hosts: "{{ targets }}"
   connection: local
   gather_facts: False
@@ -11,6 +11,7 @@
     profile_detail_url: "({{ profile_id }})"
     ome_user: admin
     ome_password: P@ssw0rd
+    template_name: "iDRAC Template"
 
   collections:
     - dellemc.openmanage
@@ -78,7 +79,7 @@
         username: "{{ ome_user }}"
         password:  "{{ ome_password }}"
         validate_certs: false
-        template_name: "iDRAC Template"
+        template_name: "{{ template_name }}"
         name_prefix: "{{ svc_tag }}"
         number_of_profiles: 1
       register: result
@@ -127,5 +128,7 @@
         - server_profile
 
 # example) ansible-playbook ome_assign_profile.yml -i inventory.yml -e "targets=ome svc_tag=6FTN9Z1"
+# example) ansible-playbook ome_assign_profile.yml -i inventory.yml -e "targets=ome template_name='iDRAC Template' svc_tag=6FTN9Z1"
+
 # /home/rob/playbooks/Mycode/ansible/dev/102722
 ...

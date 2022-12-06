@@ -1,5 +1,5 @@
 ---
-- name: server template assignment and group placement
+- name: discover systems that have announced presence on network to ome server
   hosts: "{{ targets }}"
   connection: local
   gather_facts: False

@@ -1,5 +1,5 @@
 ---
-- name: update poweredge firmware from custom ome baseline and iso boot
+- name: update poweredge firmware from one-time ome baseline
   hosts: "{{ targets }}"
   connection: local
   gather_facts: False

@@ -1,5 +1,5 @@
 ---
-- name: server template assignment
+- name: server profile delete
   hosts: "{{ targets }}"
   connection: local
   gather_facts: False
@@ -17,19 +17,18 @@
     - ansible.builtin
 
   tasks:
-    - name: assign template to server
-      ome_template:
-        hostname: "{{ inventory_hostname }}"
+    - name: unassign profile using filters
+      ome_profile:
+        hostname:   "{{ inventory_hostname }}"
         username: "{{ ome_user }}"
-        password: "{{ ome_password }}"
+        password:  "{{ ome_password }}"
         validate_certs: false
-        command: "deploy"
-        template_id: 20
-        device_service_tag:
-          - "{{ svc_tag }}"
-      tags:
-        - deploy_template
+        command: delete
+        filters:
+          SelectAll: True
+          Filters: =contains(ProfileName,'{{ svc_tag }}')
+      ignore_errors: True
 
-# example)  ansible-playbook ome_assign_template.yml -i inventory.yml -e "targets=ome svc_tag=6FTN9Z1"
+# example) ansible-playbook ome_assign_profile.yml -i inventory.yml -e "targets=ome svc_tag=6FTN9Z1"
 # /home/rob/playbooks/Mycode/ansible/dev/102722
 ...

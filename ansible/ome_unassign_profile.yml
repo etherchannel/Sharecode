@@ -1,5 +1,5 @@
 ---
-- name: server profile assignment and group placement
+- name: server profile unassignment
   hosts: "{{ targets }}"
   connection: local
   gather_facts: False
@@ -26,9 +26,10 @@
         command: unassign
         filters:
           SelectAll: True
-          Filters: =contains(ProfileName,'iDRAC Template')
+          Filters: =contains(ProfileName,'{{ svc_tag }}')
       ignore_errors: True
-      
+
 # example) ansible-playbook ome_assign_profile.yml -i inventory.yml -e "targets=ome svc_tag=6FTN9Z1"
 # /home/rob/playbooks/Mycode/ansible/dev/102722
+# module generates error even when successful so ignore_errors set to true
 ...

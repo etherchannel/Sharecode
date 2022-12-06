@@ -1,11 +1,12 @@
 ---
-- name: server profile assignment and group placement
+- name: place server in specific ome group
   hosts: "{{ targets }}"
   connection: local
   gather_facts: False
   vars:
     ome_user: admin
     ome_password: P@ssw0rd
+    #grp_name: 'Staging Servers'
 
   collections:
     - dellemc.openmanage
@@ -18,12 +19,12 @@
         username: "{{ ome_user }}"
         password: "{{ ome_password }}"
         validate_certs: false
-        name: "Staging Servers"
+        name: "{{ grp_name }}"
         device_service_tags:
           - "{{ svc_tag }}"
       tags:
         - assign_group
 
-# example) ansible-playbook ome_group_placement.yml -i inventory.yml -e "targets=ome svc_tag=6FTN9Z1"
+# example) ansible-playbook ome_group_placement.yml -i inventory.yml -e "targets=ome grp_name='Staging Servers' svc_tag=6FTN9Z1"
 # /home/rob/playbooks/Mycode/ansible/dev/102722
 ...
