@@ -11,7 +11,7 @@
     profile_detail_url: "({{ profile_id }})"
     ome_user: admin
     ome_password: P@ssw0rd
-    template_name: "iDRAC Template"
+    #template_name: "iDRAC Template"
 
   collections:
     - dellemc.openmanage
