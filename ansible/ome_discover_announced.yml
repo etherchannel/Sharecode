@@ -14,7 +14,7 @@
     - ansible.builtin
 
   tasks:
-    - name: capture device info
+    - name: discover systems
       uri:
         url: "{{ url_root }}{{ nodeinfo_url }}"
         user: "{{ ome_user }}"

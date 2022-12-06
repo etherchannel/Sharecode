@@ -1,0 +1,22 @@
+---
+- name: create kickstart from jinja template
+  hosts: "{{ targets }}"
+  connection: local
+  gather_facts: False
+  vars:
+    esxi_ip: 192.168.1.199
+    esxi_hostname: esxiname.homelab.local
+
+  collections:
+    - ansible.builtin
+    - community.vmware
+
+  tasks:
+    - name: jinja template
+      template:
+        src: esxi_kickstart.j2
+        dest: ~/playbooks/Mycode/ansible/dev/102722/KS.CFG
+
+# example) ansible-playbook vsphere_create_kickstart.yml -i inventory.yml -e "targets=127.0.0.1"
+# /home/rob/playbooks/Mycode/ansible/dev/102722
+...

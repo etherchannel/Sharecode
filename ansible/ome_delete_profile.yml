@@ -17,7 +17,7 @@
     - ansible.builtin
 
   tasks:
-    - name: unassign profile using filters
+    - name: delete profile
       ome_profile:
         hostname:   "{{ inventory_hostname }}"
         username: "{{ ome_user }}"

@@ -1,0 +1,24 @@
+vmaccepteula
+install --firstdisk --overwritevmfs --novmfsondisk
+
+network --bootproto=static --ip={{ esxi_ip }} --netmask=255.255.255.0 --gateway=192.168.1.1 --hostname={{ esxi_hostname }} --nameserver=192.168.1.180
+rootpw VMware1!
+
+reboot
+
+%firstboot --interpreter=busybox
+
+# Enable SSH
+vim-cmd hostsvc/enable_ssh
+vim-cmd hostsvc/start_ssh
+
+# Enable ESXi Shell
+vim-cmd hostsvc/enable_esx_shell
+vim-cmd hostsvc/start_esx_shell
+
+# Suppress Shell warning
+esxcli system settings advanced set -o /UserVars/SuppressShellWarning -i 1
+
+# NTP
+esxcli system ntp set -s time.cloudflare.com
+esxcli system ntp set -e 1
