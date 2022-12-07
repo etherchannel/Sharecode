@@ -1,0 +1,180 @@
+---
+- name: update poweredge firmware from one-time ome baseline
+  hosts: "{{ targets }}"
+  connection: local
+  gather_facts: False
+  vars:
+    url_root: https://{{ inventory_hostname }}
+    device_service: /api/DeviceService/Devices
+    device_id_url: "({{ device_id }})"
+    ome_user: admin
+    ome_password: P@ssw0rd
+    #catalog_name: "catalog"
+    #svc_tag: "6FTN9Z1"
+
+  collections:
+    - dellemc.openmanage
+    - ansible.builtin
+
+  tasks:
+    - name: capture device info
+      uri:
+        url: "{{ url_root }}{{ device_service }}"
+        user: "{{ ome_user }}"
+        password: "{{ ome_password }}"
+        method: GET
+        headers:
+          content-type: application/json
+        validate_certs: no
+        status_code: 200
+        return_content: no
+      register: result
+      vars:
+      tags:
+         - get_info
+
+    - name: capture device id
+      set_fact:
+        device_id: "{{ result.json.value | json_query(jmesquery) }}"
+      vars:
+        jmesquery: "[? DeviceServiceTag == {{ tck }}{{ svc_tag }}{{ tck }}].{Id:Id}[0].Id"
+        tck: "'"
+      tags:
+         - get_info
+
+    - name: capture device idrac info
+      uri:
+        url: "{{ url_root }}{{ device_service }}{{ device_id_url }}"
+        user: "{{ ome_user }}"
+        password: "{{ ome_password }}"
+        method: GET
+        headers:
+          content-type: application/json
+        validate_certs: no
+        status_code: 200
+        return_content: no
+      register: result
+      vars:
+      tags:
+         - get_info
+
+    - name: filter out ip address from idrac info
+      set_fact:
+        device_info: "{{ result | json_query(jmesquery) }}"
+      vars:
+        jmesquery: "json.{DeviceServiceTag: DeviceServiceTag, DeviceName: DeviceName, NetworkAddress: DeviceManagement[? ManagementProfile[0].AgentName == 'iDRAC'].NetworkAddress[] | [0]}"
+      tags:
+         - get_info
+
+    - name: filter info down to idrac network address
+      set_fact:
+        NetworkAddress: "{{ device_info.NetworkAddress }}"
+      tags:
+         - get_info
+
+    - name: delete job queue
+      idrac_lifecycle_controller_jobs:
+        idrac_ip:   "{{ NetworkAddress }}"
+        idrac_user: "{{ idrac_user }}"
+        idrac_password:  "{{ idrac_password }}"
+        validate_certs: false
+      register: result
+      tags:
+        - job_prep
+
+    - name: reset idrac
+      idrac_reset:
+        idrac_ip:   "{{ NetworkAddress }}"
+        idrac_user: "{{ idrac_user }}"
+        idrac_password:  "{{ idrac_password }}"
+        validate_certs: false
+      tags:
+        - job_prep
+
+    - name: pause for reset
+      pause:
+        minutes: 1
+      tags:
+        - job_prep
+
+    - name: check lifecycle controller status
+      idrac_lifecycle_controller_status_info:
+        idrac_ip:   "{{ NetworkAddress }}"
+        idrac_user: "{{ idrac_user }}"
+        idrac_password:  "{{ idrac_password }}"
+        validate_certs: false
+      register: result
+      retries: 10
+      delay: 60
+      until: result is not failed and result.lc_status_info.LCStatus == "Ready"
+      tags:
+        - job_prep
+
+    - name: create baseline for selected tag
+      ome_firmware_baseline:
+        hostname:   "{{ inventory_hostname }}"
+        username: "{{ ome_user }}"
+        password:  "{{ ome_password }}"
+        baseline_name: "Ansible_Named_{{ lookup('pipe', 'date +%Y/%m/%d_%H:%M:%S') }}"
+        baseline_description: "Ansible_Described_{{ lookup('pipe', 'date +%Y_%m_%d_%H:%M:%S') }}"
+        catalog_name: "{{ catalog_name }}"
+        device_service_tags: "{{ svc_tag }}"
+        validate_certs: false
+      register: ome_baseline_out
+      tags: baseline_compliance
+
+    - name: verify firmware baseline compliance
+      ome_firmware_baseline_compliance_info:
+        hostname:   "{{ inventory_hostname }}"
+        username: "{{ ome_user }}"
+        password:  "{{ ome_password }}"
+        baseline_name: "{{ ome_baseline_out.baseline_status.Name }}"
+        validate_certs: false
+      register: ome_compliance_out
+      tags: baseline_compliance
+
+    - name: capture compliance status of targets
+      set_fact:
+        status: "{{ ome_compliance_out.baseline_compliance_info.0.ComplianceStatus }}"
+      tags: baseline_compliance
+
+    - name: enforce baseline compliance when status not "OK"
+      ome_firmware:
+        hostname:   "{{ inventory_hostname }}"
+        username: "{{ ome_user }}"
+        password:  "{{ ome_password }}"
+        baseline_name: "{{ ome_baseline_out.baseline_status.Name }}"
+        validate_certs: false
+      when: status != "OK"
+      register: ome_enforce_out
+      tags: baseline_compliance
+
+    - name: re-verify baseline compliance after updates
+      ome_firmware_baseline_compliance_info:
+        hostname:   "{{ inventory_hostname }}"
+        username: "{{ ome_user }}"
+        password:  "{{ ome_password }}"
+        baseline_name: "{{ ome_baseline_out.baseline_status.Name }}"
+        validate_certs: false
+      retries: 10
+      delay: 60
+      register: ome_compliance_out
+      until: ome_compliance_out.baseline_compliance_info.0.ComplianceStatus == "OK"
+      tags: baseline_compliance
+
+    - name: delete baseline
+      ome_firmware_baseline:
+        hostname:   "{{ inventory_hostname }}"
+        username: "{{ ome_user }}"
+        password:  "{{ ome_password }}"
+        baseline_name: "{{ ome_baseline_out.baseline_status.Name }}"
+        state: absent
+        validate_certs: false
+      register: ome_delete_out
+      tags: baseline_compliance
+
+# example) ansible-playbook ome_firmware_baseline.yml -i inventory.yml -e "targets=ome svc_tag=6FTN9Z1 catalog_name=catalog"
+# example) ansible-playbook ome_firmware_baseline.yml -i inventory.yml -t get_info,baseline_compliance -e "targets=ome svc_tag=6FTN9Z1 catalog_name=catalog"
+# example) ansible-playbook ome_firmware_baseline.yml -i inventory.yml --skip-tags job_prep -e "targets=ome svc_tag=6FTN9Z1 catalog_name=catalog"
+# /home/rob/playbooks/Mycode/ansible/dev/102722
+...

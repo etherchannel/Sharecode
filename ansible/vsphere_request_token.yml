@@ -1,0 +1,46 @@
+---
+- name: request token
+  hosts: "{{ targets }}"
+  connection: local
+  gather_facts: False
+  vars:
+    esxi_ip: 192.168.1.199
+    esxi_hostname: esxiname.homelab.local
+    url_root: https://{{ inventory_hostname }}
+    service_uri: /api/session
+    vcenter_user: administrator@vsphere.local
+    vcenter_password: P@ssw0rd
+
+  collections:
+    - ansible.builtin
+    - community.vmware
+
+  tasks:
+    - name: request token
+      uri:
+        url: "{{ url_root }}{{ service_uri }}"
+        user: "{{ vcenter_user }}"
+        password: "{{ vcenter_password }}"
+        method: POST
+        headers:
+          content-type: application/json
+        validate_certs: no
+        status_code: 201
+        return_content: yes
+      register: result
+      tags: token
+
+    - debug:
+        var: result
+      tags: debug
+
+    - set_fact:
+        token: "{{result.vmware_api_session_id}}"
+
+    - debug:
+        var: token
+      tags: debug
+
+# example) ansible-playbook vsphere_request_token.yml -i inventory.yml -e "targets=vcenter"
+# /home/rob/playbooks/Mycode/ansible/dev/102722
+...

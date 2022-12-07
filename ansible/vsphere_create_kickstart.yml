@@ -18,5 +18,10 @@
         dest: ~/playbooks/Mycode/ansible/dev/102722/KS.CFG
 
 # example) ansible-playbook vsphere_create_kickstart.yml -i inventory.yml -e "targets=127.0.0.1"
+# https://www.virten.net/2021/11/automated-esxi-installation-inject-kickstart-file-to-esxi-iso/
+# https://williamlam.com/2022/11/creating-custom-esxi-images-using-vsphere-lifecycle-manager-vlcm-ui-and-powercli-cmdlets-for-vsphere-8.html
+# https://developer.vmware.com/apis/vsphere-automation/v7.0U3/esx/api/esx/settings/clusters/cluster/softwareactionexport/post/
+# https://developer.vmware.com/apis/vsphere-automation/v7.0U3/cis/api/session/post/
+# https://192.168.1.149/ui/app/devcenter/apiexplorer
 # /home/rob/playbooks/Mycode/ansible/dev/102722
 ...

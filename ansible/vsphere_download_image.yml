@@ -1,0 +1,88 @@
+---
+- name: download cluster image
+  hosts: "{{ targets }}"
+  connection: local
+  gather_facts: False
+  vars:
+    esxi_ip: 192.168.1.199
+    esxi_hostname: esxiname.homelab.local
+    url_root: https://{{ inventory_hostname }}
+    service_uri: /api/esx/settings/clusters/domain-c43/software?action=export
+    service_uri2: /api/session
+    vcenter_user: administrator@vsphere.local
+    vcenter_password: P@ssw0rd
+
+  collections:
+    - ansible.builtin
+    - community.vmware
+
+  tasks:
+    - name: request token
+      uri:
+        url: "{{ url_root }}{{ service_uri2 }}"
+        user: "{{ vcenter_user }}"
+        password: "{{ vcenter_password }}"
+        method: POST
+        headers:
+          content-type: application/json
+        validate_certs: no
+        status_code: 201
+        return_content: yes
+      register: result
+      tags: get_token
+
+    - debug:
+        var: result
+      tags: debug
+
+    - set_fact:
+        token: "{{result.vmware_api_session_id}}"
+      tags: get_token
+
+    - debug:
+        var: token
+      tags: debug
+
+    - name: capture image url
+      uri:
+        url: "{{ url_root }}{{ service_uri }}"
+        method: POST
+        headers:
+          content-type: application/json
+          vmware-api-session-id: "{{ token }}"
+        body: {"export_iso_image": True,"export_offline_bundle": False,"export_software_spec": False}
+        validate_certs: no
+        body_format: json
+        status_code: 200
+        return_content: yes
+      register: result
+      tags: get_url
+
+    - debug:
+        var: result
+      tags: debug
+
+    - set_fact:
+        url: "{{result.json.ISO_IMAGE}}"
+      tags: get_url
+
+    - debug:
+        var: url
+      tags: debug
+
+    #- become: yes
+    - ansible.posix.mount:
+        src: "{{ share1 }}"
+        path: /mnt/share
+        fstype: cifs
+        opts: 'username={{ share_user }},password={{ share_password }}'
+        state: mounted
+      tags: mount_share
+
+
+# example) ansible-playbook vsphere_download_image.yml -i inventory.yml -e "targets=vcenter"
+# example) ansible-playbook vsphere_download_image.yml -i inventory.yml -t mount_share -e "targets=vcenter"
+# example) ansible-playbook vsphere_download_image.yml -i inventory.yml --skip-tags mount_share -e "targets=vcenter"
+--skip-tags
+# /home/rob/playbooks/Mycode/ansible/dev/102722
+...
