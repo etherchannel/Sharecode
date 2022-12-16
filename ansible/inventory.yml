@@ -46,6 +46,12 @@ all:
       vars:
         ome_user: admin
         ome_password: P@ssw0rd
+    ome2:
+      hosts:
+        192.168.1.148:
+      vars:
+        ome_user: admin
+        ome_password: P@ssw0rd
     vcenter:
       hosts:
         192.168.1.149:
