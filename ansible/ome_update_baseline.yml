@@ -9,7 +9,7 @@
     device_id_url: "({{ device_id }})"
     ome_user: admin
     ome_password: P@ssw0rd
-    #catalog_name: "catalog"
+    #catalog_name: "IDRAC DOWNGRADE"
     #svc_tag: "6FTN9Z1"
 
   collections:

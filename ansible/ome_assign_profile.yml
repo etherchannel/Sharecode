@@ -86,7 +86,7 @@
       tags:
         - server_profile
 
-    - name: capture profile id
+    - name: set profile id
       set_fact:
         profile_id: "{{ result.profile_ids[0] }}"
       tags:

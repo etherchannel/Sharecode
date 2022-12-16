@@ -4,11 +4,6 @@
   connection: local
   gather_facts: False
   vars:
-    url_root: https://{{ inventory_hostname }}
-    device_service: /api/DeviceService/Devices
-    device_id_url: "({{ device_id }})"
-    profile_service: /api/ProfileService/Profiles
-    profile_detail_url: "({{ profile_id }})"
     ome_user: admin
     ome_password: P@ssw0rd
 
@@ -24,12 +19,12 @@
         password: "{{ ome_password }}"
         validate_certs: false
         command: "deploy"
-        template_id: 20
+        template_id: "{{ id }}"
         device_service_tag:
           - "{{ svc_tag }}"
       tags:
         - deploy_template
 
-# example)  ansible-playbook ome_assign_template.yml -i inventory.yml -e "targets=ome svc_tag=6FTN9Z1"
+# example)  ansible-playbook ome_assign_template.yml -i inventory.yml -e "targets=ome svc_tag=6FTN9Z1 id=20"
 # /home/rob/playbooks/Mycode/ansible/dev/102722
 ...
