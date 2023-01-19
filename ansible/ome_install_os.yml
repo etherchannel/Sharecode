@@ -7,6 +7,7 @@
     url_root: https://{{ inventory_hostname }}
     device_service: /api/DeviceService/Devices
     device_id_url: "({{ device_id }})"
+    device_filter: ?$top=8000
     ome_user: admin
     ome_password: P@ssw0rd
     share1: 192.168.1.180:/share/
@@ -21,7 +22,7 @@
   tasks:
     - name: capture device info
       uri:
-        url: "{{ url_root }}{{ device_service }}"
+        url: "{{ url_root }}{{ device_service }}{{ device_filter }}"
         user: "{{ ome_user }}"
         password: "{{ ome_password }}"
         method: GET

@@ -1,0 +1,29 @@
+---
+- name: discover server via discovery job
+  hosts: "{{ targets }}"
+  connection: local
+  gather_facts: False
+  vars:
+    idrac_user: root
+    idrac_password: calvin
+
+  collections:
+    - dellemc.openmanage
+    - ansible.builtin
+
+  tasks:
+    - name: delete server discovery job
+      ome_discovery:
+        hostname: "{{ inventory_hostname }}"
+        username: "{{ ome_user }}"
+        password: "{{ ome_password }}"
+        validate_certs: false
+        discovery_job_name: "{{ svc_tag }}"
+        state: absent
+      tags:
+        - delete_job
+
+# example) ansible-playbook ome_delete_discovery.yml -i inventory.yml -e "targets=ome2 svc_tag=6FTN9Z1"
+# example) ansible-playbook ome_delete_discovery.yml -i inventory.yml -e "targets=ome svc_tag=6FTN9Z1"
+# /home/rob/playbooks/Mycode/ansible/dev/102722
+...

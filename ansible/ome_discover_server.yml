@@ -7,6 +7,7 @@
     url_root: https://{{ inventory_hostname }}
     device_service: /api/DeviceService/Devices
     device_id_url: "({{ device_id }})"
+    device_filter: ?$top=8000
     ome_user: admin
     ome_password: P@ssw0rd
     share1: 192.168.1.180:/share/
@@ -24,7 +25,7 @@
   tasks:
     - name: capture device info
       uri:
-        url: "{{ url_root }}{{ device_service }}"
+        url: "{{ url_root }}{{ device_service }}{{ device_filter }}"
         user: "{{ ome_user }}"
         password: "{{ ome_password }}"
         method: GET
@@ -95,19 +96,7 @@
       tags:
         - create_job
 
-    - name: delete server discovery job
-      ome_discovery:
-        hostname: "{{ inventory_hostname }}"
-        username: "{{ ome_user }}"
-        password: "{{ ome_password }}"
-        validate_certs: false
-        discovery_job_name: "{{ svc_tag }}"
-        state: absent
-      tags:
-        - delete_job
-
-
 # example) ansible-playbook ome_discover_server.yml -i inventory.yml -e "targets=ome svc_tag=6FTN9Z1"
-# example) ansible-playbook ome_discover_server.yml -i inventory.yml --skip-tags delete_job -e "targets=ome svc_tag=6FTN9Z1"
+# example) ansible-playbook ome_discover_server.yml -i inventory.yml -e "targets=ome2 svc_tag=6FTN9Z1"
 # /home/rob/playbooks/Mycode/ansible/dev/102722
 ...

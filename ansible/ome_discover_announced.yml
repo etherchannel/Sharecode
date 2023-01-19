@@ -14,7 +14,7 @@
     - ansible.builtin
 
   tasks:
-    - name: discover systems
+    - name: push system discovery credentials
       uri:
         url: "{{ url_root }}{{ nodeinfo_url }}"
         user: "{{ ome_user }}"
