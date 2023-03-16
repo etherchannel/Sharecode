@@ -161,6 +161,7 @@
     - name: set job id
       set_fact:
         job_id: "{{ ome_enforce_out.update_status.Id }}"
+      when: ome_enforce_out.update_status.Id is defined
       tags: 
         - baseline_deletion
 
@@ -173,6 +174,7 @@
         validate_certs: false
       register: job_details_out
       until: job_details_out.job_info.LastRunStatus.Name == "Completed"
+      when: job_details_out.job_info.LastRunStatus.Name is defined
       retries: 60
       delay: 60
       tags:
@@ -188,7 +190,7 @@
         job_wait: true
         job_wait_timeout: 600 
         validate_certs: false
-      when: job_details_out.job_info.LastRunStatus.Name == "Completed"
+      when: job_details_out.job_info.LastRunStatus.Name is defined and job_details_out.job_info.LastRunStatus.Name == "Completed" or job_details_out.job_info.LastRunStatus.Name is not defined 
       retries: 5
       delay: 60
       register: ome_delete_out
