@@ -56,8 +56,8 @@ def generate_auto_deployment_id():
 #create auto deploy job
 def create_auto_deployment_job():
     url = "https://%s/api/AutoDeployService/AutoDeploy" % (ome_ip)
-    payload = json.dumps({"AutoDeployId": autodeployid, "GroupId": None, "NetworkBootIsoModel": {"BootToNetwork": False, "ShareType": "CIFS", "IsoPath": "abc.iso", \
-    "ShareDetail": {"IpAddress": "xx.xx.xx.xx", "ShareName": "10.22.33.22", "User": "asdf", "Password": "asdf"}}, "Attributes": []})
+    payload = json.dumps({"AutoDeployId": autodeployid, "GroupId": None, "NetworkBootIsoModel": {"BootToNetwork": False, "ShareType": "", "IsoPath": "", \
+    "ShareDetail": {"IpAddress": "", "ShareName": "", "User": "", "Password": ""}}, "Attributes": []})
     headers = {'Content-Type': 'application/json'}
     payload_json = json.loads(payload)
     payload_pretty = json.dumps(payload_json, indent=2)

@@ -31,4 +31,5 @@ headers = {'Content-Type': 'application/json'}
 response = requests.get(url, headers=headers, data = payload, verify=False, auth=(ome_user, ome_pass))
 data = response.json()
 data_pretty = json.dumps(data, indent=2)
+print("Retrieving list of existing Auto Deploy jobs ")
 print(" Status Code: ", response.status_code, "\n", "Returned Data:\n", data_pretty)
