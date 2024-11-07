@@ -4,9 +4,9 @@ from datetime import date, datetime
 
 requests.packages.urllib3.disable_warnings()
 
-ome_ip = 'demo-omevv-02-ome.ose.adc.delllabs.net'
-ome_username = 'rob_smith1@ose.local'
-ome_password = 'P@ssw0rd!23'
+ome_ip = 'o_ip'
+ome_username = 'o_user'
+ome_password = 'o_pass'
 catalog_version = "24.07.10" #https://www.dell.com/support/kbdoc/en-us/000225254/firmware-catalog-for-dell-s-vsan-ready-nodes-with-esxi-8-x-branch-images
 
 def get_auth_token() -> str:

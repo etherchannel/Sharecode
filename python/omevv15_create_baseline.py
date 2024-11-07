@@ -5,10 +5,10 @@ from datetime import date, datetime
 
 requests.packages.urllib3.disable_warnings()
 
-ome_ip = 'demo-omevv-02-ome.ose.adc.delllabs.net'
-vcenter_username = 'rob_smith1@ose.local'
-vcenter_password = 'P@ssw0rd!23'
-vcenter_cluster_name = 'OMEVV-02-Cluster'
+ome_ip = 'o_ip'
+vcenter_username = 'v_user'
+vcenter_password = 'v_pass'
+vcenter_cluster_name = 'v_cluster'
 
 def get_console_uuid() -> str:
     url = f"https://{ome_ip}/omevv/GatewayService/v1/Consoles"

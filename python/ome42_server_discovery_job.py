@@ -3,9 +3,9 @@ import json
 
 requests.packages.urllib3.disable_warnings()
 
-ome_ip = 'ome-lmc.ose.adc.delllabs.net'
-ome_username = 'oseadmin'
-ome_password = 'OSETe@mR0ckz!'
+ome_ip = 'o_ip'
+ome_username = 'o_user'
+ome_password = 'o_pass'
 drac_ip_range = "192.168.1.126-192.168.1.127"
 drac_username = "root"
 drac_password = "calvin"
