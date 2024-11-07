@@ -4,9 +4,9 @@ from datetime import date, datetime
 
 requests.packages.urllib3.disable_warnings()
 
-ome_ip = 'o_ip'
-ome_username = 'o_user'
-ome_password = 'o_pass'
+ome_ip = 'demo-omevv-01-ome.ose.adc.delllabs.net'
+ome_username = 'rob_smith1@ose.local'
+ome_password = 'P@ssw0rd!23'
 catalog_version = "24.07.10" #https://www.dell.com/support/kbdoc/en-us/000225254/firmware-catalog-for-dell-s-vsan-ready-nodes-with-esxi-8-x-branch-images
 
 def get_auth_token() -> str:
@@ -22,7 +22,7 @@ def get_auth_token() -> str:
     response = requests.post(auth_url, headers=auth_headers, data=json.dumps(auth_payload), verify=False, auth=(ome_username, ome_password))
 
     if response.status_code == 201:
-        print("Successfully authenticated to OpenManage Enterprise")
+        print("Authenticated to OpenManage Enterprise")
         return response.headers["X-Auth-Token"]        
     raise Exception(f"Authentication failed with status code: {response.status_code}")
 
@@ -37,7 +37,7 @@ def get_catalog_id() -> str:
     response_pretty = json.dumps(response_json, indent=4)
 
     if response.status_code == 200:
-        print('Retrieving catalog data')
+        print('Parsing online firmware catalog data')
     else:
         raise Exception(f"Catalog retrieval failed with status code: {response.status_code}")
     
@@ -49,7 +49,8 @@ def get_catalog_id() -> str:
                     for vsan_item in item['Value']:
                         if vsan_item['Key'] == catalog_version:  
                             vsan_catalog_items.append(vsan_item)
-                            vsan_catalog_id = vsan_item['Id']   
+                            vsan_catalog_id = vsan_item['Id'] 
+                            print(f'Found user defined catalog version ({catalog_version})')  
     return vsan_catalog_id
 
 def get_group_id() -> str:
@@ -70,7 +71,7 @@ def get_group_id() -> str:
         name = each['Name']
         if name == 'All Devices':
             grp_id = each['Id']
-            print(f'Captured \'All Devices\' group Id of {grp_id}')
+            print(f'Identified the required ID ({grp_id}) from the \'All Devices\' group')
             return grp_id
 
 def create_repo() -> str:
@@ -90,8 +91,10 @@ def create_repo() -> str:
     })
     headers = {"Content-Type": "application/json", "X-Auth-Token": token}
     response = requests.post(repo_url, headers=headers, data=repo_payload, verify=False)
+    repo_payload_json = json.loads(repo_payload)
+    name = repo_payload_json['Name']
     if response.status_code == 201:
-        print(f'Successfully created vSAN repository from catalog {catalog_version}')
+        print(f'Created vSAN repository \'{name}\'')
     else:
         print(response.text)
         raise Exception(f"Repository failed with status code: {response.status_code}")
