@@ -3,12 +3,12 @@ import json
 
 requests.packages.urllib3.disable_warnings()
 
-ome_ip = 'o_ip'
-ome_username = 'o_user'
-ome_password = 'o_pass'
-drac_ip_range = "192.168.1.126-192.168.1.127"
-drac_username = "root"
-drac_password = "calvin"
+ome_ip = '' #openmanage enterprise ip or fqdn
+ome_username = ''
+ome_password = ''
+drac_ip_range = "192.168.1.126-192.168.1.127"   #ip address or ip range of idracs to be discovered
+drac_username = "root"  #username of idracs to be discovered
+drac_password = "calvin"    #password of idracs to be discovered
 
 def get_auth_token() -> str:
     """Get an authentication token from OpenManage Enterprise."""

@@ -4,10 +4,10 @@ from datetime import date, datetime
 
 requests.packages.urllib3.disable_warnings()
 
-ome_ip = 'o_ip'
-ome_username = 'o_user'
-ome_password = 'o_pass'
-catalog_version = "24.07.10" #https://www.dell.com/support/kbdoc/en-us/000225254/firmware-catalog-for-dell-s-vsan-ready-nodes-with-esxi-8-x-branch-images
+ome_ip = '' #openmanage enterprise ip or fqdn
+ome_username = ''
+ome_password = ''
+catalog_version = "24.07.10"    #https://www.dell.com/support/kbdoc/en-us/000225254/firmware-catalog-for-dell-s-vsan-ready-nodes-with-esxi-8-x-branch-images
 
 def get_auth_token() -> str:
     """Get an authentication token from OpenManage Enterprise."""
@@ -24,7 +24,7 @@ def get_auth_token() -> str:
     if response.status_code == 201:
         print("Authenticated to OpenManage Enterprise")
         return response.headers["X-Auth-Token"]        
-    raise Exception(f"Authentication failed with status code: {response.status_code}")
+    raise Exception(response.text)
 
 def get_catalog_id() -> str:
     catalog_url = f"https://{ome_ip}/api/UpdateManagementService/Catalogs"
@@ -39,7 +39,7 @@ def get_catalog_id() -> str:
     if response.status_code == 200:
         print('Parsing online firmware catalog data')
     else:
-        raise Exception(f"Catalog retrieval failed with status code: {response.status_code}")
+        raise Exception(response.text)
     
     vsan_catalog_items = []
     for catalog in response_json['value']:
@@ -51,9 +51,10 @@ def get_catalog_id() -> str:
                             vsan_catalog_items.append(vsan_item)
                             vsan_catalog_id = vsan_item['Id'] 
                             print(f'Found user defined catalog version ({catalog_version})')  
-    return vsan_catalog_id
+                            return vsan_catalog_id
+    raise Exception(f"vSAN firmware catalog '{catalog_version}' not found")
 
-def get_group_id() -> str:
+def get_group_id() -> int:
     server_group_url = f"https://{ome_ip}/api/GroupService/Groups"
     headers = {
         "Content-Type": "application/json", 
@@ -65,7 +66,7 @@ def get_group_id() -> str:
     if response.status_code == 200:
         print('Retrieving group data')
     else:
-        raise Exception(f"Unable to retrieve group data; failed with status code: {response.status_code}")
+        raise Exception(response.text)
     
     for each in response_json['value']:
         name = each['Name']
@@ -74,7 +75,7 @@ def get_group_id() -> str:
             print(f'Identified the required ID ({grp_id}) from the \'All Devices\' group')
             return grp_id
 
-def create_repo() -> str:
+def create_repo():
     repo_url = f"https://{ome_ip}/api/UpdateManagementService/Repositories"
     now = datetime.now()
     f_now = now.strftime("%d%m%y %H%M%S")
@@ -96,8 +97,7 @@ def create_repo() -> str:
     if response.status_code == 201:
         print(f'Created vSAN repository \'{name}\'')
     else:
-        print(response.text)
-        raise Exception(f"Repository failed with status code: {response.status_code}")
+        raise Exception(response.text)
         
 token = get_auth_token()
 catalog_id = get_catalog_id()    
