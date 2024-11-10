@@ -1,13 +1,17 @@
+#This script will create a vsan firmware repository in openmanage enterprise based on the user defined catalog version. 
+
 import requests
 import json
 from datetime import date, datetime
 
 requests.packages.urllib3.disable_warnings()
 
-ome_ip = '' #openmanage enterprise ip or fqdn
+ome_ip = ''       #openmanage enterprise ip or fqdn
 ome_username = ''
 ome_password = ''
-catalog_version = "24.07.10"    #https://www.dell.com/support/kbdoc/en-us/000225254/firmware-catalog-for-dell-s-vsan-ready-nodes-with-esxi-8-x-branch-images
+catalog_version = "24.07.10" #https://www.dell.com/support/kbdoc/en-us/000225254/firmware-catalog-for-dell-s-vsan-ready-nodes-with-esxi-8-x-branch-images
+repo_name_prefex = 'API Created Repository' #will be appended with date and time
+baseline_name_prefex = 'API Created Baseline' #will be appended with date and time
 
 def get_auth_token() -> str:
     """Get an authentication token from OpenManage Enterprise."""
@@ -18,9 +22,7 @@ def get_auth_token() -> str:
         "Password": ome_password, 
         "SessionType": "API"
         }
-
     response = requests.post(auth_url, headers=auth_headers, data=json.dumps(auth_payload), verify=False, auth=(ome_username, ome_password))
-
     if response.status_code == 201:
         print("Authenticated to OpenManage Enterprise")
         return response.headers["X-Auth-Token"]        
@@ -34,13 +36,10 @@ def get_catalog_id() -> str:
         }
     response = requests.get(catalog_url, headers=headers, verify=False)
     response_json = response.json()
-    response_pretty = json.dumps(response_json, indent=4)
-
     if response.status_code == 200:
         print('Parsing online firmware catalog data')
     else:
         raise Exception(response.text)
-    
     vsan_catalog_items = []
     for catalog in response_json['value']:
         if catalog['Key'].startswith("Index Catalog"):
@@ -62,12 +61,10 @@ def get_group_id() -> int:
         }
     response = requests.get(server_group_url, headers=headers, verify=False)
     response_json = response.json()
-
     if response.status_code == 200:
         print('Retrieving group data')
     else:
         raise Exception(response.text)
-    
     for each in response_json['value']:
         name = each['Name']
         if name == 'All Devices':
@@ -82,9 +79,9 @@ def create_repo():
     repo_payload = json.dumps({
         "BaseCatalogID": f"{catalog_id}",
         "BaseCatalogName": f"Index Catalog-{catalog_version}",
-        "Name": f"API Created Repository {f_now}",
+        "Name": f"{repo_name_prefex} {f_now}",
         "DeviceSelectionType": "groups",
-        "BaselineName": f"API Created Repository {f_now}",
+        "BaselineName": f"{baseline_name_prefex} {f_now}",
         "IsBaseline": True,
         "GroupIDs": [
             grp_id
