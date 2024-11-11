@@ -54,6 +54,7 @@ def manage_hosts(hosts_data):
             print(f"Scheduled manage job for host ({hostname})")
         else:
             print(f"Manage job failed for host {hostname} with error ({response.text})")
+
 uuid = get_console_uuid()
 hosts_data = compliance()
 manage_hosts(hosts_data)
