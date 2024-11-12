@@ -1,4 +1,4 @@
-#This script will manage compliant systems in the openmanage enterprise vcenter plugin.
+#This script will manage supported systems in the openmanage enterprise vcenter plugin.
 
 import requests, json
 from datetime import datetime
