@@ -30,7 +30,7 @@ def compliance():
     response = requests.get(url, headers=headers, data=payload, verify=False, auth=(vcenter_username, vcenter_password))
     print('Getting Compliance data')
     if response.status_code == 200 and response.json() == []: 
-        print("No systems are available to be managed") 
+        print("No compliant systems are available to be managed") 
     elif response.status_code == 200 and response.json() != []:
         print("Systems available to be managed")
     else:
@@ -41,7 +41,7 @@ def manage_hosts(hosts_data):
     for each in hosts_data:
         id = each['hostid']
         hostname = each['hostName']
-        if each['state'] == 'COMPLIANT' or each['state'] == 'NONCOMPLIANT' or each['state'] == 'Compliant' or each['state'] == 'Noncompliant':
+        if each['state'] == 'COMPLIANT' or each['state'] == 'NONCOMPLIANT':
             print(f'Getting host ({id})')
             headers = {
                 'x_omivv-api-vcenter-identifier': uuid,
