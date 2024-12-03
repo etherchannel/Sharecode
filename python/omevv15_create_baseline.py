@@ -104,7 +104,7 @@ def create_baseline() -> str:
         raise Exception(response.text)
 
 uuid = get_console_uuid()
-#resync_repo_profiles()
+resync_repo_profiles()
 repo_id = get_most_recent_repo_id()
 cluster_id = get_cluster_id()
 create_baseline()
