@@ -1,14 +1,13 @@
 #This script will register a vcenter server in the openmanage enterprise vcenter plugin.
 
-import requests
-import json
+import requests, json
 
 requests.packages.urllib3.disable_warnings()
 
-ome_ip = ''       #openmanage enterprise ip or fqdn
+ome_ip = ''       #use fqdn
 ome_username = ''
 ome_password = ''
-vcenter_ip = ''  #vcenter enterprise ip or fqdn
+vcenter_ip = ''  #use fqdn
 vcenter_username = ''
 vcenter_password = ''
 

@@ -1,23 +1,33 @@
 #This script will create an openmange enterprise vcenter plugin baseline (for inclusion in a vlcm image or use in an omevv baremetal deployment).
 
-import requests
-import json
-import time
+import requests, json, time
 from datetime import datetime
 
 requests.packages.urllib3.disable_warnings()
 
-ome_ip = ''       #openmanage enterprise ip or fqdn
+ome_ip = '' #use fqdn
+vcenter_ip = '' #use fqdn
 vcenter_username = ''
 vcenter_password = ''
-vcenter_cluster_name = ''               #name of vcenter cluster to be tied to the new baseline
+vcenter_cluster_name = 'OMEVV-02-Cluster'               #name of vcenter cluster to be tied to the new baseline
 search_prefix = 'API Created'                     #used to find repository (firmware) profiles that start with this string and will be associated with the new omevv baseline 
 baseline_name_prefex = 'API Created Baseline'     #used to name new omevv baseline
+
 def get_console_uuid() -> str:
     url = f"https://{ome_ip}/omevv/GatewayService/v1/Consoles"
     response = requests.get(url, verify=False, auth=(vcenter_username, vcenter_password))
-    uuid = response.json()[0]["uuid"]
-    print(f'Captured vCenter console ID ({uuid})')
+    response_json = response.json()
+    if response.status_code == 200:
+        print('Getting Console UUID data')
+    else:
+        raise Exception(response.text)
+    for item in response_json: 
+        uuid = None
+        if item["consoleAddress"] == vcenter_ip: 
+            uuid = item["uuid"] 
+            print(f'Captured Console UUID ({uuid})')
+        else: 
+            print("Console address not found")
     return uuid
 
 def resync_repo_profiles() -> str:
@@ -94,7 +104,7 @@ def create_baseline() -> str:
         raise Exception(response.text)
 
 uuid = get_console_uuid()
-resync_repo_profiles()
+#resync_repo_profiles()
 repo_id = get_most_recent_repo_id()
 cluster_id = get_cluster_id()
 create_baseline()

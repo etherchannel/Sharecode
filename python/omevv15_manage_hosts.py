@@ -5,20 +5,26 @@ from datetime import datetime
 
 requests.packages.urllib3.disable_warnings()
 
-ome_ip = '' 
+ome_ip = '' #use fqdn
+vcenter_ip = '' #use fqdn
 vcenter_username = ''
 vcenter_password = ''
-f_now = datetime.now().strftime("%d%m%y %H%M%S")
 
 def get_console_uuid() -> str:
     url = f"https://{ome_ip}/omevv/GatewayService/v1/Consoles"
     response = requests.get(url, verify=False, auth=(vcenter_username, vcenter_password))
-    print('Getting Console UUID data')
-    uuid = response.json()[0]["uuid"]
+    response_json = response.json()
     if response.status_code == 200:
-        print(f'Captured Console UUID ({uuid})')
+        print('Getting Console UUID data')
     else:
         raise Exception(response.text)
+    for item in response_json: 
+        uuid = None
+        if item["consoleAddress"] == vcenter_ip: 
+            uuid = item["uuid"] 
+            print(f'Captured Console UUID ({uuid})')
+        else: 
+            print("Console address not found")
     return uuid
 
 def compliance():
@@ -30,7 +36,7 @@ def compliance():
     response = requests.get(url, headers=headers, data=payload, verify=False, auth=(vcenter_username, vcenter_password))
     print('Getting Compliance data')
     if response.status_code == 200 and response.json() == []: 
-        print("No compliant systems are available to be managed") 
+        print("No systems are available to be managed") 
     elif response.status_code == 200 and response.json() != []:
         print("Systems available to be managed")
     else:
@@ -39,9 +45,10 @@ def compliance():
 
 def manage_hosts(hosts_data):
     for each in hosts_data:
+        f_now = datetime.now().strftime("%d%m%y %H%M%S")
         id = each['hostid']
         hostname = each['hostName']
-        if each['state'] == 'COMPLIANT' or each['state'] == 'NONCOMPLIANT':
+        if each['state'] == 'COMPLIANT' or each['state'] == 'NONCOMPLIANT' or each['state'] == 'Compliant' or each['state'] == 'Noncompliant':
             print(f'Getting host ({id})')
             headers = {
                 'x_omivv-api-vcenter-identifier': uuid,
