@@ -27,7 +27,7 @@ def get_console_uuid() -> str:
             uuid = item["uuid"] 
             print(f'Captured Console UUID ({uuid})')
         else: 
-            print("Console address not found")
+            print("Ignoring UUID for out-of-scope console")
     return uuid
 
 def resync_repo_profiles() -> str:
