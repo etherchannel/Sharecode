@@ -75,7 +75,7 @@ def get_group_id() -> int:
 def create_repo():
     repo_url = f"https://{ome_ip}/api/UpdateManagementService/Repositories"
     now = datetime.now()
-    f_now = now.strftime("%d%m%y %H%M%S")
+    f_now = now.strftime("%d%m%y %H%M%S%f")
     repo_payload = json.dumps({
         "BaseCatalogID": f"{catalog_id}",
         "BaseCatalogName": f"Index Catalog-{catalog_version}",

@@ -75,7 +75,7 @@ def get_cluster_id() -> int:
 
 def create_baseline() -> str:
     url = f"https://{ome_ip}/omevv/GatewayService/v1/Consoles/{uuid}/BaselineProfiles"
-    f_now = datetime.now().strftime("%d%m%y %H%M%S")
+    f_now = datetime.now().strftime("%d%m%y %H%M%S%f")
     payload = json.dumps({
     "name": f"{baseline_name_prefex} {f_now}",
     "description": f"{baseline_name_prefex} {f_now}",

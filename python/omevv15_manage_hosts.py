@@ -48,7 +48,7 @@ def compliance():
 
 def manage_hosts(hosts_data):
     for each in hosts_data:
-        f_now = datetime.now().strftime("%d%m%y %H%M%S")
+        f_now = datetime.now().strftime("%d%m%y %H%M%S%f")
         id = each['hostid']
         hostname = each['hostName']
         if each['state'] == 'COMPLIANT' or each['state'] == 'NONCOMPLIANT' or each['state'] == 'Compliant' or each['state'] == 'Noncompliant':
