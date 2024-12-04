@@ -18,17 +18,20 @@ def get_console_uuid() -> str:
     response = requests.get(url, verify=False, auth=(vcenter_username, vcenter_password))
     response_json = response.json()
     if response.status_code == 200:
-        print('Getting Console UUID data')
+        print('Getting console UUID data')
     else:
         raise Exception(response.text)
     for item in response_json: 
         uuid = None
         if item["consoleAddress"] == vcenter_ip: 
             uuid = item["uuid"] 
-            print(f'Captured Console UUID ({uuid})')
+            print(f'Captured console UUID ({uuid})')
         else: 
             print("Ignoring UUID for out-of-scope console")
-    return uuid
+    if uuid == None:
+        raise Exception("Unable to find console UUID")
+    else:
+        return uuid
 
 def resync_repo_profiles() -> str:
     url = f"https://{ome_ip}/omevv/GatewayService/v1/RepositoryProfiles/ResyncRepository"
