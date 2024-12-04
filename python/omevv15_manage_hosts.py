@@ -26,7 +26,7 @@ def get_console_uuid() -> str:
         else: 
             print("Ignoring UUID for out-of-scope console")
     if uuid == None:
-        raise Exception("Unable to find console UUID")
+        raise Exception(f"Unable to find {vcenter_ip} console UUID")
     else:
         return uuid
 
