@@ -56,7 +56,7 @@ def get_most_recent_repo_id() -> int:
         raise Exception(f"No profiles found starting with '{search_prefix}'")
         return None
     most_recent_profile = max(matching_profiles, key=lambda x: datetime.fromisoformat(x['catalogCreatedDate'][:-1]))
-    print(f"Identified target repository ID ({most_recent_profile['id']})")
+    print(f"Identified target repository id ({most_recent_profile['id']})")
     return most_recent_profile['id']
 
 def get_cluster_id() -> int:
