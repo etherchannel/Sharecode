@@ -9,27 +9,29 @@ ome_ip = '' #use fqdn
 vcenter_ip = '' #use fqdn
 vcenter_username = ''
 vcenter_password = ''
+ome_username = ''
+ome_password = ''
 vcenter_cluster_name = 'OMEVV-02-Cluster'               #name of vcenter cluster to be tied to the new baseline
 search_prefix = 'API Created'                     #used to find repository (firmware) profiles that start with this string and will be associated with the new omevv baseline 
 baseline_name_prefex = 'API Created Baseline'     #used to name new omevv baseline
 
 def get_console_uuid() -> str:
     url = f"https://{ome_ip}/omevv/GatewayService/v1/Consoles"
-    response = requests.get(url, verify=False, auth=(vcenter_username, vcenter_password))
+    response = requests.get(url, verify=False, auth=(ome_username, ome_password))
     response_json = response.json()
     if response.status_code == 200:
-        print('Getting console UUID data')
+        print('Getting console id data')
     else:
         raise Exception(response.text)
     for item in response_json: 
         uuid = None
         if item["consoleAddress"] == vcenter_ip: 
             uuid = item["uuid"] 
-            print(f'Captured console UUID ({uuid})')
+            print(f'Captured console id ({uuid})')
         else: 
-            print("Ignoring UUID for out-of-scope console")
+            print("Ignoring id for out-of-scope console")
     if uuid == None:
-        raise Exception(f"Unable to find {vcenter_ip} console UUID")
+        raise Exception(f"Unable to find {vcenter_ip} console id")
     else:
         return uuid
 
@@ -63,13 +65,13 @@ def get_cluster_id() -> int:
     response = requests.get(url, headers=headers, auth=(vcenter_username, vcenter_password), verify=False)
     response_json = response.json()
     if response.status_code == 200:
-        print('Retrieving cluster data to find VMware cluster ID')
+        print('Retrieving cluster data to find VMware cluster id')
     else:
         raise Exception(response.text)
     for each in response_json:
         consoleEntityName = each['consoleEntityName']
         if consoleEntityName == vcenter_cluster_name:
-            print(f'Captured VMware cluster ID ({each["groupId"]})')
+            print(f'Captured VMware cluster id ({each["groupId"]})')
             return each['groupId']
     raise Exception(f"vCenter cluster '{vcenter_cluster_name}' not found")
 

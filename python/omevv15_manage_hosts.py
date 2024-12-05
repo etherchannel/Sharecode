@@ -9,24 +9,26 @@ ome_ip = '' #use fqdn
 vcenter_ip = '' #use fqdn
 vcenter_username = ''
 vcenter_password = ''
+ome_username = ''
+ome_password = ''
 
 def get_console_uuid() -> str:
     url = f"https://{ome_ip}/omevv/GatewayService/v1/Consoles"
-    response = requests.get(url, verify=False, auth=(vcenter_username, vcenter_password))
+    response = requests.get(url, verify=False, auth=(ome_username, ome_password))
     response_json = response.json()
     if response.status_code == 200:
-        print('Getting console UUID data')
+        print('Getting console id data')
     else:
         raise Exception(response.text)
     for item in response_json: 
         uuid = None
         if item["consoleAddress"] == vcenter_ip: 
             uuid = item["uuid"] 
-            print(f'Captured console UUID ({uuid})')
+            print(f'Captured console id ({uuid})')
         else: 
-            print("Ignoring UUID for out-of-scope console")
+            print("Ignoring id for out-of-scope console")
     if uuid == None:
-        raise Exception(f"Unable to find {vcenter_ip} console UUID")
+        raise Exception(f"Unable to find {vcenter_ip} console id")
     else:
         return uuid
 
@@ -37,7 +39,7 @@ def compliance():
     'x_omivv-api-vcenter-identifier': uuid
     }
     response = requests.get(url, headers=headers, data=payload, verify=False, auth=(vcenter_username, vcenter_password))
-    print('Getting Compliance data')
+    print('Getting compliance data')
     if response.status_code == 200 and response.json() == []: 
         print("No systems are available to be managed") 
     elif response.status_code == 200 and response.json() != []:
