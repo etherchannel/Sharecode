@@ -32,7 +32,7 @@ def get_console_uuid() -> str:
     else:
         return uuid
 
-def compliance():
+def compliance() -> list:
     url = f"https://{ome_ip}/omevv/GatewayService/v1/Consoles/{uuid}/Compliance"
     payload = {}
     headers = {
