@@ -35,7 +35,7 @@ def get_console_uuid() -> str:
     else:
         return uuid
 
-def resync_repo_profiles() -> str:
+def resync_repo_profiles() -> None:
     url = f"https://{ome_ip}/omevv/GatewayService/v1/RepositoryProfiles/ResyncRepository"
     payload = json.dumps({})
     headers = {'x_omivv-api-vcenter-identifier': uuid, 'Content-Type': 'application/json'}
@@ -75,7 +75,7 @@ def get_cluster_id() -> int:
             return each['groupId']
     raise Exception(f"vCenter cluster '{vcenter_cluster_name}' not found")
 
-def create_baseline() -> str:
+def create_baseline() -> None:
     url = f"https://{ome_ip}/omevv/GatewayService/v1/Consoles/{uuid}/BaselineProfiles"
     f_now = datetime.now().strftime("%d%m%y %H%M%S%f")
     payload = json.dumps({

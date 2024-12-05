@@ -72,7 +72,7 @@ def get_group_id() -> int:
             print(f'Identified the required ID ({grp_id}) from the \'All Devices\' group')
             return grp_id
 
-def create_repo():
+def create_repo() -> None:
     repo_url = f"https://{ome_ip}/api/UpdateManagementService/Repositories"
     now = datetime.now()
     f_now = now.strftime("%d%m%y %H%M%S%f")

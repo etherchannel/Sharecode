@@ -11,7 +11,7 @@ vcenter_ip = ''  #use fqdn
 vcenter_username = ''
 vcenter_password = ''
 
-def register_vcenter() -> str:
+def register_vcenter() -> None:
     url = f"https://{ome_ip}/omevv/GatewayService/v1/Consoles"
     payload = json.dumps({
     "consoleAddress": vcenter_ip,

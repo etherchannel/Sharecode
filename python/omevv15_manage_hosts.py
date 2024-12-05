@@ -48,7 +48,7 @@ def compliance() -> list:
         raise Exception(response.text)
     return response.json()
 
-def manage_hosts(hosts_data):
+def manage_hosts(hosts_data) -> None:
     for each in hosts_data:
         f_now = datetime.now().strftime("%d%m%y %H%M%S%f")
         id = each['hostid']
