@@ -1,13 +1,12 @@
 #This script will create a server discovery job in openmanage enterprise to onboard a single or range of idracs.
 
-import requests
-import json
+import requests, json
 
 requests.packages.urllib3.disable_warnings()
 
-ome_ip = ''                 #openmanage enterprise ip or fqdn
-ome_username = ''
-ome_password = ''
+ome_ip = '172.26.38.195'                 #openmanage enterprise ip or fqdn
+ome_username = 'admin'
+ome_password = 'P@ssw0rd'
 drac_ip_range = "192.168.1.126-192.168.1.127"           #ip address or ip range of idracs to be discovered
 drac_username = "root"                                  #username of idracs to be discovered
 drac_password = "calvin"                                #password of idracs to be discovered
