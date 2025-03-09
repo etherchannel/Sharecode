@@ -1,5 +1,5 @@
 #This script is used to run racadm commands against systems managed by openmanage enterprise.
-#example 1 runs racadm command against all systems managed by ome: ome_42_remote_cli.py -i 172.26.38.195 -u admin -p P@ssw0rd -c 'getsysinfo'
+#example 1 runs racadm command against all systems managed by ome: python ome_42_remote_cli.py -i 172.26.38.195 -u admin -p P@ssw0rd -c 'getsysinfo'
 #example 2 runs racadm command against systems in a group called 'All Devices': ome_42_remote_cli.py -i ome-lmc.ose.adc.delllabs.net -u oseadmin -p OSETe@mR0ckz! -c 'getsysinfo' -g 'All Devices'
 
 import requests, warnings, json, argparse, time
@@ -22,10 +22,28 @@ ome_username = args["u"]
 ome_password = args["p"]
 ome_target = args["g"]
 
+def get_auth_token() -> str:
+    """Get an authentication token from OpenManage Enterprise."""
+    auth_url = f"https://{ome_ip}/api/SessionService/Sessions"
+    auth_headers = {"Content-Type": "application/json"}
+    auth_payload = {
+        "UserName": ome_username, 
+        "Password": ome_password, 
+        "SessionType": "API"
+        }
+    response = requests.post(auth_url, headers=auth_headers, data=json.dumps(auth_payload), verify=False, auth=(ome_username, ome_password))
+    if response.status_code == 201:
+        print("Authenticated to OpenManage Enterprise")
+        return response.headers["X-Auth-Token"]        
+    raise Exception(response.text)
+
 def get_group_id(ome_target) -> int:
     url = f"https://{ome_ip}/api/GroupService/Groups"
-    headers = {"Content-Type": "application/json"}
-    response = requests.get(url, headers=headers, verify=False, auth=(ome_username, ome_password))
+    headers = {
+        "Content-Type": "application/json", 
+        "X-Auth-Token": token
+        }
+    response = requests.get(url, headers=headers, verify=False)
     response_json = response.json()
     for each in response_json['value']:
         Name = each['Name']
@@ -45,8 +63,11 @@ def cli_url(ome_grp_id) -> str:
     return url_cli
 
 def run_cli(url_cli):
-    headers_cli = {'Content-Type': 'application/json'}
-    response_cli = requests.get(url_cli, headers=headers_cli, verify=False, auth=(ome_username, ome_password))
+    headers_cli = {
+        "Content-Type": "application/json", 
+        "X-Auth-Token": token
+        }
+    response_cli = requests.get(url_cli, headers=headers_cli, verify=False)
     response_cli_json = response_cli.json()
     count = 0
     for each in response_cli_json['value']:
@@ -74,9 +95,12 @@ def run_cli(url_cli):
     print(f'The command was executed against {count} systems')
 
 def get_output(ome_ip, job_id):
-    headers_output = {'Content-Type': 'application/json'}
+    headers_output = {
+        "Content-Type": "application/json", 
+        "X-Auth-Token": token
+        }
     url_output = f'https://{ome_ip}/api/JobService/Jobs({job_id})/ExecutionHistories'
-    response_output = requests.get(url_output, headers=headers_output, verify=False, auth=(ome_username, ome_password))
+    response_output = requests.get(url_output, headers=headers_output, verify=False)
     if response_output.status_code == 200:
         value_output = response_output.json()["value"]
         if value_output:  # Check if the list is not empty
@@ -97,6 +121,7 @@ def get_output(ome_ip, job_id):
     else:
         raise Exception("Failed to retrieve job status")
 
+token = get_auth_token()
 ome_grp_id = get_group_id(ome_target) if ome_target else None
 url_cli = cli_url(ome_grp_id)
 run_cli(url_cli)
