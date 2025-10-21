@@ -1,6 +1,6 @@
 #This script is used to run racadm commands against systems managed by openmanage enterprise.
 #example 1 runs racadm command against all systems managed by ome: python ome_42_remote_cli.py -i 172.26.38.195 -u admin -p P@ssw0rd -c 'getsysinfo'
-#example 2 runs racadm command against systems in a group called 'All Devices': ome_42_remote_cli.py -i ome-lmc.ose.adc.delllabs.net -u oseadmin -p OSETe@mR0ckz! -c 'getsysinfo' -g 'All Devices'
+#example 2 runs racadm command against systems in a group called 'All Devices': python ome_42_remote_cli.py -i ome-lmc.ose.adc.delllabs.net -u oseadmin -p OSETe@mR0ckz! -c 'getsysinfo' -g 'All Devices'
 
 import requests, warnings, json, argparse, time
 

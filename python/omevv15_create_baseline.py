@@ -1,9 +1,14 @@
 #This script will create an openmange enterprise vcenter plugin baseline (for inclusion in a vlcm image or use in an omevv baremetal deployment).
 
-import requests, json, time
+import requests, json, time, urllib3
 from datetime import datetime
 
-requests.packages.urllib3.disable_warnings()
+# -----------------------------------------------------------
+# Disable SSL warnings for unverified HTTPS requests.
+# This is necessary because the OMEVV API may use self-signed
+# certificates in lab/test environments.
+# -----------------------------------------------------------
+urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
 
 ome_ip = '' #use fqdn
 vcenter_ip = '' #use fqdn
