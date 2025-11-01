@@ -11,8 +11,8 @@ ome_password = 'P@ssw0rd'
 #catalog_type = 'vSAN Catalog for Enterprise Servers'
 catalog_type = 'ESXi Catalog for Enterprise Servers'
 catalog_version = "21.11.15" #https://www.dell.com/support/kbdoc/en-us/000225254/firmware-catalog-for-dell-s-vsan-ready-nodes-with-esxi-8-x-branch-images
-repo_name_prefex = 'OME Agent Repository' #will be appended with date and time
-baseline_name_prefex = 'OME Agent Baseline' #will be appended with date and time
+repo_name_prefex = 'API Created Repository' #will be appended with date and time
+baseline_name_prefex = 'API Created Baseline' #will be appended with date and time
 
 def get_auth_token() -> str:
     """Get an authentication token from OpenManage Enterprise."""
